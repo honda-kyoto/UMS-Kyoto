@@ -1,0 +1,384 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>利用者編集 - 利用者管理</title>
+<!-- InstanceEndEditable -->
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta http-equiv="content-script-type" content="text/javascript" />
+<link rel="stylesheet" type="text/css" href="css/import.css" media="all" />
+<!-- InstanceBeginEditable name="head" -->
+<script src="js/common.js"></script>
+<link rel="stylesheet" href="css/jquery.cluetip.css" type="text/css" />
+<script src="js/jquery-1.7.1.min.js"></script>
+<script src ="js/themeswitchertool.js"></script>
+<script src="js/jquery.hoverIntent.js"></script>
+<script src="js/jquery.bgiframe.min.js"></script>
+<script src="js/jquery.cluetip.js"></script>
+<script src="js/jquery.ie-select-width.js"></script>
+<script>
+<!--
+
+
+$(document).ready(function() {
+
+  $('a.mailsave').cluetip({splitTitle: '|'});
+});
+
+
+function typeChange(obj)
+{
+	if (!confirm("転送設定を変更します。よろしいですか？"))
+	{
+		obj.checked = !obj.checked;
+		return;
+	}
+	formSubmit('change');
+}
+
+function addSendonAddr()
+{
+	if (!confirm("転送先を追加します。よろしいですか？"))
+	{
+		return;
+	}
+	formSubmit('add');
+}
+
+function delSendonAddr(no)
+{
+	if (!confirm("転送先を削除します。よろしいですか？"))
+	{
+		return;
+	}
+	document.mainForm.list_no.value = no;
+	formSubmit('delete');
+}
+
+function passwdChange()
+{
+	if (!confirm("パスワードを変更します。よろしいですか？"))
+	{
+		return;
+	}
+	formSubmit('passwd');
+}
+
+//-->
+</script>
+<!-- InstanceEndEditable -->
+</head>
+<body>
+<div id="header">
+	<div class="inner">
+		<h1><img src="image/logo.png" alt="利用者管理システム" width="285" height="42" /></h1>
+	</div>
+</div>
+<form action="/mypage.php" method="post" name="mainForm" id="mainForm">
+  <!-- InstanceBeginEditable name="subHeader" -->
+  <div id="subHeader"><div class="inner fix">
+    <div id="loginUser">ようこそ　システム　管理者さん（テスト部）　前回ログイン日時：2013/05/08 19:34</div>
+    <ul id="subLink">
+      <li><a href="logout.php"><img src="image/btn_logout.gif" title="ログアウト" width="100" height="26" /></a></li>
+      <li><a href="menu.php"><img src="image/btn_menu.gif" alt="メニューに戻る" width="120" height="26" /></a></li>
+    </ul>
+  </div></div>
+  <!-- InstanceEndEditable -->
+  <div id="main"><div class="inner">
+    <h2 class="title"><!-- InstanceBeginEditable name="pageTitle" -->利用者編集<!-- InstanceEndEditable --></h2>
+    <div class="contents"><!-- InstanceBeginEditable name="pageContents" -->
+      <input type="hidden" name="mode" value="">
+      <table width="100%" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td><span class="errMsg" id="errMsgArea"></span></td>
+        </tr>
+      </table>
+      <div id="tabs1">
+        <ul>
+            <li><a href="new_user_sysad_tab_1.html"><span>基本情報</span></a></li>
+          <li><a href="new_user_sysad_tab_1_2.html"><span>ＮＣＶＣ</span></a></li>
+          <li><a href="new_user_sysad_tab_1_3.html"><span>メール</span></a></li>
+          <li><a href="new_user_sysad_tab_2.html"><span>電子カルテ</span></a></li>
+          <li><a href="new_user_sysad_tab_3.html"><span>給与システム</span></a></li>
+                    <li><a href="new_user_sysad_tab_4.html"><span class="curtab">入退室カード</span></a></li>
+        </ul>
+      </div>
+      <div style="clear:both;"></div>
+      <div id="usersBox">
+        <table border="0" cellpadding="3" cellspacing="3">
+          <tr>
+            <td><table width="700" border="0" cellpadding="5" cellspacing="0" class="inputTab">
+              <tr>
+                <th colspan="4">基本情報</th>
+                </tr>
+              <tr>
+                <th>氏名</th>
+                <td>山田　太郎（ヤマダ　タロウ）</td>
+                <th width="100">内線</th>
+                <td>9999</td>
+                </tr>
+              <tr>
+                <th width="105">組織</th>
+                <td colspan="3">医学研究科　医学研究科　知財企画掛　特定研究員　助手</td>
+                </tr>
+              </table></td>
+          </tr>
+          <tr>
+            <td><img src="image/space.gif" alt="" width="1" height="5" />
+              <input type="button" value="　　データ出力　　" onclick="returnList();" /></td>
+          </tr>
+          <tr>
+            <td><hr /></td>
+          </tr>
+          <tr>
+            <td><img src="image/space.gif" alt="" width="1" height="5" /></td>
+          </tr>
+        </table>
+        <h3>■カード種別</h3>
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr>
+            <td><input type="radio" name="card_type" id="card_type_1" value="1" disabled /></td>
+            <td><label for="card_type_1">セキュリティーカード</label></td>
+            <td>&nbsp;&nbsp;&nbsp;</td>
+            <td><input name="card_type" type="radio" id="card_type_2" value="2" checked="checked" disabled  /></td>
+            <td><label for="card_type_2">ハンズフリータグ</label></td>
+            </tr>
+          <tr>
+            <td colspan="5"><span style="background-color: #fff;"><img src="image/space.gif" alt="" width="10" height="10" /></span></td>
+            </tr>
+        </table>
+        <h3>■扉の権限</h3>
+      <table border="0" cellspacing="3" cellpadding="3">
+        <tr>
+          <td valign="top"><table border="0" cellpadding="5" cellspacing="0" class="listTab">
+            <tr>
+              <th scope="col">記号</th>
+              <th width="250" scope="col">棟名称</th>
+              <th scope="col">権限</th>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="height: 40px; line-height: 92%;">8<br />
+                13</td>
+              <td>旧産科婦人科病棟</td>
+              <td align="center"><input name="permission_1" type="checkbox" id="permission_1" value="1" checked="checked" /></td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="height: 40px; line-height: 92%;">10<br />
+                11</td>
+              <td>外来診療棟<br />
+                地階～４階、１階東</td>
+              <td align="center"><input name="permission_2" type="checkbox" id="permission_2" value="1" checked="checked" /></td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="height: 40px;">積0</td>
+              <td>積貞棟地階～８階</td>
+              <td align="center"><input name="permission_3" type="checkbox" id="permission_3" value="1" checked="checked" /></td>
+            </tr>
+            <tr>
+              <td colspan="3" align="center" style="background-color: #fff;"><img src="image/space.gif" width="10" height="10" /></td>
+              </tr>
+            <tr>
+              <td align="center" valign="middle" style="height: 34px;">積G</td>
+              <td>積貞棟１階<br />
+                （抗がん剤取揃室）</td>
+              <td align="center"><input name="permission_4" type="checkbox" id="permission_4" value="1" /></td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="height: 34px;">積K</td>
+              <td>積貞棟地階<br />
+                （給食部門）</td>
+              <td align="center"><input name="permission_5" type="checkbox" id="permission_5" value="1" /></td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="height: 34px;">積S</td>
+              <td>積貞棟８階<br />
+                （特別室SS）</td>
+              <td align="center"><input name="permission_6" type="checkbox" id="permission_6" value="1" /></td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="height: 34px;">積A</td>
+              <td>積貞棟６階<br />
+                （特別室SA）</td>
+              <td align="center"><input name="permission_7" type="checkbox" id="permission_7" value="1" /></td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="height: 34px;">北</td>
+              <td>北病棟２階</td>
+              <td align="center"><input name="permission_8" type="checkbox" id="permission_8" value="1" /></td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="height: 34px;">M1</td>
+              <td>外来診療棟地階<br />
+                （北側：MEセンター）</td>
+              <td align="center"><input name="permission_9" type="checkbox" id="permission_9" value="1" /></td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="height: 34px;">M2</td>
+              <td>外来診療棟地階<br />
+                （南側：放射線部）</td>
+              <td align="center"><input name="permission_10" type="checkbox" id="permission_10" value="1" /></td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="height: 34px;">S1</td>
+              <td>中央診療施設棟４階<br />
+                （ハイブリッド手術室）</td>
+              <td align="center"><input name="permission_11" type="checkbox" id="permission_11" value="1" /></td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="height: 34px;">S2</td>
+              <td>中央診療施設棟３階<br />
+                （手術部）</td>
+              <td align="center"><input name="permission_12" type="checkbox" id="permission_12" value="1" /></td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="height: 34px;">S3</td>
+              <td>中央診療施設棟４階<br />
+                （麻酔科）</td>
+              <td align="center"><input name="permission_13" type="checkbox" id="permission_13" value="1" /></td>
+            </tr>
+          </table></td>
+          <td>&nbsp;</td>
+          <td valign="top"><table border="0" cellpadding="5" cellspacing="0" class="listTab">
+            <tr>
+              <th scope="col">記号</th>
+              <th width="250" scope="col">棟名称</th>
+              <th scope="col">権限</th>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="height: 40px;">N1</td>
+              <td>西病棟（中玄関のみ）</td>
+              <td align="center"><input name="permission_14" type="checkbox" id="permission_14" value="1" /></td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="height: 40px; line-height: 92%;">N1<br />
+                N2<br />
+                N3</td>
+              <td>西病棟</td>
+              <td align="center"><input name="permission_15" type="checkbox" id="permission_15" value="1" /></td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="height: 40px; line-height: 92%;">R1<br />
+                R2<br />
+                R3</td>
+              <td>和進会館２階
+                （卒後臨床研修室）<br />
+                ※研修医のみ申請可</td>
+              <td align="center"><input name="permission_16" type="checkbox" id="permission_16" value="1" /></td>
+            </tr>
+            <tr>
+              <td colspan="3" align="center" style="background-color: #fff;"><img src="image/space.gif" alt="" width="10" height="10" /></td>
+              </tr>
+            <tr>
+              <td align="center" valign="middle" style="height: 34px;">Y2</td>
+              <td>外来診療棟地階<br />
+                （薬剤部ポスト）</td>
+              <td align="center"><input name="permission_17" type="checkbox" id="permission_17" value="1" /></td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="height: 34px; line-height: 92%;">Y1<br />
+                Y2<br />
+                Y3</td>
+              <td>外来診療棟地階<br />
+                （薬剤部）</td>
+              <td align="center"><input name="permission_18" type="checkbox" id="permission_18" value="1" /></td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle"height: 34px;"">H1</td>
+              <td>中央診療施設棟１階<br />
+                （放射線部インフォメーション）</td>
+              <td align="center"><input name="permission_19" type="checkbox" id="permission_19" value="1" /></td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="height: 34px;">H2</td>
+              <td>中央診療施設棟１階<br />
+                （放射線部総合画像診断室）</td>
+              <td align="center"><input name="permission_20" type="checkbox" id="permission_20" value="1" /></td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="height: 34px;">J1<br />
+                J2</td>
+              <td>南病棟地階<br />
+                （医療情報部電算機室）</td>
+              <td align="center"><input name="permission_21" type="checkbox" id="permission_21" value="1" /></td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="height: 34px;">J3</td>
+              <td>南病棟地階<br />
+                （医療情報部電算機室）</td>
+              <td align="center"><input name="permission_22" type="checkbox" id="permission_22" value="1" /></td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="height: 34px;">J4</td>
+              <td>外来診療棟地階<br />
+                （病歴管理室）</td>
+              <td align="center"><input name="permission_23" type="checkbox" id="permission_23" value="1" /></td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="height: 34px;">T1</td>
+              <td>臨床研究総合センター</td>
+              <td align="center"><input name="permission_24" type="checkbox" id="permission_24" value="1" /></td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="height: 34px;">D1</td>
+              <td>第１臨床研究棟地階<br />
+                （分子イメージング集中研究センター）</td>
+              <td align="center"><input name="permission_25" type="checkbox" id="permission_25" value="1" /></td>
+            </tr>
+            <tr>
+              <td colspan="2" align="left" valign="middle" style="height: 34px;">　再発行</td>
+              <td align="center"><input name="permission_26" type="checkbox" id="permission_26" value="1" /></td>
+            </tr>
+          </table></td>
+        </tr>
+        <tr>
+          <td align="left"><img src="image/space.gif" alt="" width="1" height="5" /></td>
+          <td align="left">&nbsp;</td>
+          <td align="left">&nbsp;</td>
+        </tr>
+        <tbody id="hisDataList2">
+        </tbody>
+      </table>
+<input type="hidden" name="list_no" id="list_no" value="">
+        <h3>■所属情報等</h3>
+      <table border="0" cellspacing="3" cellpadding="3">
+        <tr>
+          <td><table border="0" cellpadding="5" cellspacing="0" class="listTab">
+            <tr>
+              <th scope="col">所属情報１</th>
+              <th scope="col">所属情報２</th>
+              <th scope="col">所属情報３</th>
+              <th scope="col">所属情報４</th>
+              <th scope="col">キー番号</th>
+              </tr>
+            <tr>
+              <td align="center"><input name="textfield2" type="text" id="textfield2" value="99999999" size="10" maxlength="9" /></td>
+              <td align="center"><input name="textfield3" type="text" id="textfield3" size="10" maxlength="9" /></td>
+              <td align="center"><input name="textfield4" type="text" id="textfield4" size="10" maxlength="9" /></td>
+              <td align="center"><input name="textfield5" type="text" id="textfield5" size="10" maxlength="9" /></td>
+              <td align="right"><input name="textfield" type="text" id="textfield" value="T9999999" size="10" maxlength="9" /></td>
+              </tr>
+            </table></td>
+        </tr>
+        <tr>
+          <td align="left"><img src="image/space.gif" alt="" width="1" height="5" /></td>
+        </tr>
+        <tbody id="hisDataList">
+        </tbody>
+        <tr>
+          <td><input type="button" value="　　　更　　　新　　　" onclick="editUser();" />
+            <input type="button" value="　　　リセット　　　" onclick="resetUser();" />
+<input type="button" value="　　一覧に戻る　　" onclick="returnList();" />
+            </td>
+        </tr>
+      </table>
+      </div>
+      <!-- InstanceEndEditable --></div></div>
+  </div>
+</form>
+<div id="footer">Copyright © 2012 DAN-TEC CO.,LTD. All Rights Reserved.</div>
+</body>
+<!-- InstanceEnd -->
+</html>

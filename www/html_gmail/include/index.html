@@ -1,0 +1,157 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+	<meta name="robots" content="noindex,nofollow" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link rel="stylesheet" type="text/css" href="./css/default.css" media="all">
+	<script type="text/javascript" src="./js/function.js"></script>
+	<title>KUHP アカウント一括操作</title>
+</head>
+<body onload="changePlasefolder()">
+	<!-- <h1><u>KUHP Gmailアカウント一括操作</u></h1> -->
+	<img src="image/logo.gif" alt="KUHP アカウント一括操作" style="text-align:center;">
+	<br>
+
+	<div class="main">
+		<div class="manual">
+			<a href="./manual.txt">操作マニュアル</a> <br>
+			<a href="<?php echo $log_dir ?>">ログファイル</a>
+		</div>
+		<form action="index.php" method="post" id="web_form">
+			<div class="function_menu">
+				<select name="func" id="selectbox" onchange="changePlasefolder();">
+					<option value="">機能を選択してください</option>
+					<option value="check" <?php echo $select_check ?> >登録状況チェック</option>
+					<option value="create" <?php echo $select_create ?> >アカウント作成</option>
+					<option value="changepass" <?php echo $select_passwd ?> >Gmailパスワード変更要求</option>
+					<option value="stop" <?php echo $select_stop ?> >Gmailアカウント停止</option>
+					<option value="reactive" <?php echo $select_reactive ?> >Gmailアカウント再開</option>
+					<option value="liststop" <?php echo $select_liststop ?> >メーリングリスト配信停止</option>
+					<!-- <option value="delete" <?php echo $select_delete ?> >アカウント削除</option> -->
+				</select>
+				<input type="submit" value="処理開始"><br>
+
+				<div id="form">
+					<div id="server_info">
+						<b>【サーバー情報】</b>
+						<ul style="list-style:none;">
+							<li><b>Webサーバー</b></li>
+							<li>ログインユーザー名：<input type="text" name="webuser" value="<?php echo $serverinfo['web']['login_user'] ?>"> パスワード：<input type="password" name="webpass" value="<?PHP echo $serverinfo['web']['password'] ?>"></li>
+							<li>　</li>
+							<li><b>MLサーバー</b></li>
+							<li>ログインユーザー名：<input type="text" name="mluser" value="<?php echo $serverinfo['ml']['login_user'] ?>"> パスワード：<input type="password" name="mlpass" value="<?PHP echo $serverinfo['ml']['password'] ?>"></li>
+						</ul>
+					</div>
+					<div id="create_option">
+						<b>【オプション】</b>
+						<ul style="list-style:none;">
+							<li><label><input type="checkbox" name="header_line_on" checked>1行目をCSVヘッダ行として扱い、登録処理を行わない。(2行目から登録処理が行われます)</label></li>
+							<li><label><input type="checkbox" name="tab_explode_on" checked>ユーザー情報のCSV区切り文字を、カンマではなくタブにする。(Excelからコピペする時用)</li>
+							<li><div style="font-size:75%; color:red;">　　※区切り文字をタブにする場合、ユーザー情報の役職(備考)欄に必ず値を入力してください。空の場合カラム数不足でエラーがでます。</div></label></li>
+							<li>　</li>
+							<li>　　<a href="./create_new_account.csv">テンプレートCSVファイル ダウンロード</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+			<div id="history_wrap">
+				<span>更新履歴</span>
+				<div id="history_body">
+					<div id="history_body_ie">
+						<ul id="history_list">
+							<li>
+								<div class="history_title">2014/04/09<br><span>バグフィックス</span></div>
+								<ul>
+									<li>アカウント作成時のアカウント名に「.(ピリオド)」が含まれていた時、処理結果を正しく取得できない場合があるバグを修正</li>
+									<li>アカウント作成時のエラー文言を一部変更</li>
+								</ul>
+							</li>
+							<li>
+								<div class="history_title">2014/03/27<br><span>アカウント作成時のCSVデータをサーバー保存</span></div>
+								<ul>
+									<li>アカウント作成時に使用したCSVデータをサーバーに保存します</li>
+									<li>CSVファイルへは、ログファイルへのリンクをクリックし、『csv』ディレクトリを選択することでアクセスできます</li>
+									<li>CSVファイルのファイル名に含まれるのタイムスタンプは、アカウント作成時に生成されるログファイルのタイムスタンプと同一です</li>
+									<li>CSVファイルはアカウント作成時のログファイルと同様に、規定日数経過後、自動的に削除されます</li>
+								</ul>
+							</li>
+							<li>
+								<div class="history_title">2014/03/27<br><span>メーリングリスト配信停止を実装</span></div>
+								<ul>
+									<li>アナウンス、アラート、職種MLへの登録を一括で停止状態にします</li>
+									<li>処理されたユーザーは"##BYE メールアドレス"と表記されMLに所属していた形跡は残ります</li>
+								</ul>
+							</li>
+							<li>
+								<div class="history_title">2014/02/13<br><span>登録状況チェックを実装</span></div>
+								<ul>
+									<li>Gmail、Web領域、ML登録状況を一括で調べることができます</li>
+									<li>処理完了後、画面下部に結果の一覧表が出力されます</li>
+									<li>MLに規定外の登録がされている場合、オンマウスで詳細な登録状況が確認できます</li>
+								</ul>
+							</li>
+							<li>
+								<div class="history_title">2014/02/05<br><span>処理状況をリアルタイム表示するよう変更</span></div>
+							</li>
+							<li>
+								<div  class="history_title">2014/02/03<br><span>アカウント一括登録時の区切り文字をタブにも対応</span></div>
+								<ul>
+									<li>ユーザー情報をエクセルからコピペした時、区切り文字がタブになるので、そのまま処理できるように対応</li>
+									<li>区切り文字とタブにする際は、「役職(備考)」に必ず何らかの値を入力してください</li>
+									<li>区切り文字をコンマで行う場合はチェックを外してください</li>
+								</ul>
+							</li>
+							<li>
+								<div class="history_title">2014/02/03<br><span>グループ利用アカウントの一括登録に対応</span></div>
+								<ul>
+									<li>職種が「g」と記述されたユーザーはML登録をスキップします</li>
+									<li>Gmail、パスワード変更要求、Web領域登録のみが行われます</li>
+								</ul>
+							</li>
+							<li>
+								<div class="history_title">2014/01/27<br><span>アカウント一括登録ログの自動削除機能を追加</span></div>
+								<ul>
+									<li>生成から30日以上経過したログファイルは自動的に削除されます</li>
+								</ul>
+							</li>
+							<li>
+								<div class="history_title">2014/01/24<br><span>アカウント一括登録機能を追加</span></div>
+								<ul>
+									<li>Gmail、パスワード変更要求、Web領域、ML登録を一括で処理できます</li>
+									<li>ユーザー情報はCSV形式で入力してください</li>
+									<li>テンプレートファイルのヘッダ行を含んだままでも処理可能です</li>
+									<li>ヘッダ行を含まず処理を行う場合はチェックボックスを外してください</li>
+									<li>処理完了後はログファイルが生成されますので、必ず確認してください</li>
+								</ul>
+							</li>
+							<li>
+								<div class="history_title">2013/12/24<br><span>アカウント停止、再開、パスワード変更要求の一括処理を実装</span></div>
+								<ul>
+									<li>Gmailアカウントの停止、再開、パスワード変更要求の一括処理が可能です</li>
+									<li>処理中にエラーが発生した場合はログファイルが生成されます</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+			<div class="clear"></div>
+
+			<div class="input_field">
+				<textarea id="textarea" name="user_list" cols="150" rows="10" placeholder="アカウント名を入力してください。"><?php if(isset($_POST['user_list'])) echo $_POST['user_list']; ?></textarea>
+				<span id="past_time"><?php echo $past_time; ?></span>
+			</div>
+
+			<input type="hidden" name="mode" value="exec">
+		</form>
+
+	</div>
+	<div class="clear"></div>
+	<?php echo $error_message; ?>
+	<?php echo $success_message; ?>
+	<?php echo $check_result; ?>
+</body>
+</html>

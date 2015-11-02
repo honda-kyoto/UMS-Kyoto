@@ -1,0 +1,178 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- InstanceBegin template="../../../ama/HTML/Templates/base.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>カード情報検索 - 利用者管理</title>
+<!-- InstanceEndEditable -->
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta http-equiv="content-script-type" content="text/javascript" />
+<link rel="stylesheet" type="text/css" href="css/import.css" media="all" />
+<!-- InstanceBeginEditable name="head" -->
+<script src="js/common.js"></script>
+<script src="js/prototype.js"></script>
+<script type="text/javascript" src="js/jkl-calendar.js" charset="UTF-8"></script>
+<script type="text/javascript">
+<!--
+var cal_start = new JKL.Calendar("caldiv_start","mainForm","start_date");
+cal_start.setStyle( "frame_color", "#3333CC" );
+cal_start.setStyle( "typestr", "yyyy/mm/dd" );
+var cal_end = new JKL.Calendar("caldiv_end","mainForm","end_date");
+cal_end.setStyle( "frame_color", "#3333CC" );
+cal_end.setStyle( "typestr", "yyyy/mm/dd" );
+
+
+// チェックボックス名を配列形式（name[]）で定義した場合のメソッド
+function clickAllCheckBox(allCheckBox, checkElementsName)
+{
+	var isChecked = allCheckBox.checked;
+
+	if (document.mainForm.elements[checkElementsName].length) {
+		for (var i=0; i<document.mainForm.elements[checkElementsName].length; i++) {
+			document.mainForm.elements[checkElementsName][i].checked = isChecked;
+		}
+	} else {
+		// チェックボックスが１つのとき（リストが１件のとき）
+		document.mainForm.elements[checkElementsName].checked = isChecked;
+	}
+}
+
+
+//-->
+</script>
+<!-- InstanceEndEditable -->
+</head>
+<body>
+<div id="header">
+	<div class="inner">
+		<h1><img src="image/logo.png" alt="利用者管理システム" width="285" height="42" /></h1>
+	</div>
+</div>
+<form action="/guests_search.php" method="post" name="mainForm" id="mainForm">
+  <!-- InstanceBeginEditable name="subHeader" -->
+  <div id="subHeader"><div class="inner fix">
+    <div id="loginUser">ようこそ　システム　管理者さん（医学研究科）　前回ログイン日時：2014/07/23 08:59</div>
+    <ul id="subLink">
+      <li><a href="logout.php"><img src="image/btn_logout.gif" title="ログアウト" width="100" height="26" /></a></li>
+      <li><a href="menu.php"><img src="image/btn_menu.gif" alt="メニューに戻る" width="120" height="26" /></a></li>
+    </ul>
+  </div></div>
+  <!-- InstanceEndEditable -->
+  <div id="main"><div class="inner">
+    <h2 class="title"><!-- InstanceBeginEditable name="pageTitle" -->カード情報検索<!-- InstanceEndEditable --></h2>
+    <div class="contents"><!-- InstanceBeginEditable name="pageContents" -->
+      <input type="hidden" name="mode" value="">
+      <table width="100%" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td><span class="errMsg" id="errMsgArea"></span></td>
+        </tr>
+      </table>
+      <input type="hidden" name="guest_id" id="guest_id" value="">
+      <input type="hidden" name="page" id="page" value="1">
+      <input type="hidden" name="order" id="order" value="">
+      <div id="topBtnArea"></div>
+      <div style="clear:both;"></div>
+      <h3>■検索条件</h3>
+      <table border="0" cellpadding="2" cellspacing="0" class="searchTab">
+        <tr>
+          <th width="110">登録日・更新日</th>
+          <td><table border="0" cellspacing="2" cellpadding="0">
+                <tr>
+                  <td><input name="start_date" type="text" id="start_date" onchange="cal_start.getFormValue(); cal_start.hide();" onclick="cal_start.write(); cal_end.hide();" size="12" maxlength="10" value="" /><br /><div id="caldiv_start"></div></td>
+                  <td>～</td>
+                  <td><input name="end_date" type="text" id="end_date" onchange="cal_end.getFormValue(); cal_end.hide();" onclick="cal_end.write(); cal_start.hide();" size="12" maxlength="10" value="" /><br /><div id="caldiv_end"></div></td>
+                </tr>
+              </table>
+           </td>
+          <th width="110">オプション</th>
+          <td><table border="0" cellpadding="0" cellspacing="0">
+            <tr>
+              <td><input type="radio" name="option" id="option_1" value="1"  checked="checked" /></td>
+              <td><label for="option_1">全て</label></td>
+              <td>&nbsp;&nbsp;&nbsp;</td>
+              <td><input type="radio" name="option" id="option_2" value="2"  /></td>
+              <td><label for="option_2">新規登録のみ</label></td>
+              <td>&nbsp;&nbsp;&nbsp;</td>
+              <td><input type="radio" name="option" id="option_3" value="3"  /></td>
+              <td><label for="option_3">更新のみ</label></td>
+            </tr>
+          </table>
+            <div id="caldiv_etd"></div></td>
+          </tr>
+      </table>
+      <div class="searchBlock">
+        <a href="#"  /><img src="image/btn_search.gif" title="検索" /></a>
+        <a href="#" /><img src="image/btn_clear.gif" title="条件クリア" /></a>
+      </div>
+
+      <div class="resultBlock">
+        <h3>■検索結果一覧</h3>
+        <table cellspacing="0" class="listTabH">
+          <tr>
+            <td>7件中　1～4件表示 　<b>1</b> </td>
+            <td align="right">表示件数：
+                <select name="list_max">
+                <option value="10" selected>10件</option><option value="20" >20件</option><option value="50" >50件</option><option value="100" >100件</option>              </select></td>
+          </tr>
+        </table>
+        <table width="100%" border="0" cellpadding="2" cellspacing="0" class="listTab">
+          <tr>
+            <th scope="col"><input type="checkbox" name="allcheck" value="1" onClick="clickAllCheckBox(this, 'checked_id[]')" /></th>
+            <th scope="col"><a class="sortlink" href="#"><img src="image/sortdown_out.gif" alt="昇順で並び替え">氏名</a></th>
+            <th scope="col"><a class="sortlink" href="#"><img src="image/sortdown_out.gif" alt="昇順で並び替え">所属</a></th>
+            <th scope="col"><a class="sortlink" href="#"><img src="image/sortdown_out.gif" alt="昇順で並び替え">職種</a></th>
+            <th scope="col"><a class="sortlink" href="#"><img src="image/sortdown_out.gif" alt="昇順で並び替え">役職</a></th>
+            <th scope="col"><a class="sortlink" href="#"><img src="image/sortdown_out.gif" alt="昇順で並び替え">登録日時</a></th>
+            </tr>
+          <tr>
+            <td align="center"><input type="checkbox" name="checked_id[]" value="15" /></td>
+            <td>山田　太郎</td>
+            <td>知財企画掛</td>
+            <td>特定研究員</td>
+            <td>助手</td>
+            <td>2014/07/23 14:05:41</td>
+            </tr>
+          <tr>
+            <td align="center"><input type="checkbox" name="checked_id[]" value="14" /></td>
+            <td>鈴木　次郎</td>
+            <td>知財企画掛</td>
+            <td>特定研究員</td>
+            <td>助手</td>
+            <td>2014/07/23 21:31:34</td>
+            </tr>
+          <tr>
+            <td align="center"><input type="checkbox" name="checked_id[]" value="13" /></td>
+            <td>山本　花子</td>
+            <td>知財企画掛</td>
+            <td>特定研究員</td>
+            <td>助手</td>
+            <td>2014/07/24 00:48:35</td>
+            </tr>
+          <tr>
+            <td align="center"><input type="checkbox" name="checked_id[]" value="12" /></td>
+            <td>佐藤　景子</td>
+            <td>知財企画掛</td>
+            <td>特定研究員</td>
+            <td>助手</td>
+            <td>2014/07/24 00:47:32</td>
+            </tr>
+        </table>
+        <table cellspacing="0" class="listTabB">
+          <tr>
+            <td>7件中　1～4件表示 　<b>1</b> </td>
+            </tr>
+          <tr>
+            <td align="right"><input type="button" name="btnPrint" value="　　　チェックしたデータをまとめて出力　　　"></td>
+          </tr>
+        </table>
+      </div>
+      <!-- InstanceEndEditable --></div></div>
+  </div>
+</form>
+<div id="footer">Copyright © 2012 DAN-TEC CO.,LTD. All Rights Reserved.</div>
+</body>
+<!-- InstanceEnd -->
+</html>
+

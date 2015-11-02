@@ -1,0 +1,2 @@
+php_value include_path ".:/usr/share/pear:/var/www/phplib"
+php_flag allow_call_time_pass_reference on

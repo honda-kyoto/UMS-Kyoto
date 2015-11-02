@@ -1,0 +1,1 @@
+<?php include("view/users/admin_search_list.tpl") ?>

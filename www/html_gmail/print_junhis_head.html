@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>無題ドキュメント</title>
+<script>
+function print_out() {
+   /* print() が使えるブラウザかどうかを判断 */
+   if (navigator.userAgent.match(/msie ([\d\.]+)/i))
+      v = (eval(RegExp.$1) >= 5) ? 1 : 0;
+   else if (self.innerWidth)
+      v = (eval(navigator.appVersion.charAt(0)) >= 4) ? 1 : 0;
+   else v = 0;
+
+   /* print() が使えるブラウザなら印刷を実行 */
+//   if (v) self.print();
+	if (v) {
+	parent.mainFrame.focus();
+	parent.mainFrame.print();
+	}
+   else alert("お使いのブラウザではこの機能は利用できません");
+}
+</script>
+<style type="text/css">
+<!--
+
+body {
+  background-color: #999;
+}
+
+#printBtn {
+  float: right;
+  margin-right: 30px;
+  padding-top: 20px;
+}
+-->
+</style>
+</head>
+<body>
+<form id="form1" name="form1" method="post" action="">
+  <div id="printBtn">
+    <input type="button" name="button" id="button" value="　　印刷　　" onClick="print_out();" />　
+    <input type="button" name="button" id="button" value="　　閉じる　　" onClick="parent.close();" />
+  </div>
+</form>
+</body>
+</html>

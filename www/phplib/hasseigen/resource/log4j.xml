@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+<!-- ********** Appender ***************************************************** -->
+
+  <!-- NullLogAppender for root logger -->
+  <appender name="NullAppender" class="org.apache.log4j.varia.NullAppender" />
+
+<!-- ********** ConsoleAppender ***************************************************** -->
+
+  <!-- ConsoleAppender for root logger -->
+  <appender name="ConsoleAppender" class="org.apache.log4j.ConsoleAppender">
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern"
+             value="%d{yyyy/MM/dd HH:mm:ss.SSS},%p,%t,%l,%m%n" />
+    </layout>
+  </appender>
+
+  <!-- ConsoleAppender for function logger -->
+  <appender name="FunctionAppender" class="org.apache.log4j.ConsoleAppender">
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern"
+             value="【　業　務　ロ　グ　】　----　%d{yyyy/MM/dd HH:mm:ss.SSS},%p,%l,%m%n" />
+    </layout>
+  </appender>
+
+  <!-- ConsoleAppender for base logger -->
+  <appender name="BaseAppender" class="org.apache.log4j.ConsoleAppender">
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern"
+             value="====  BaseLog  ==== %p,%t,%l,%m%n" />
+    </layout>
+  </appender>
+
+  <!-- ConsoleAppender for operation logger -->
+  <appender name="OperationAppender" class="org.apache.log4j.ConsoleAppender">
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern"
+             value="[OPERATION LOG]     :　%m%n" />
+    </layout>
+  </appender>
+
+  <!-- ConsoleAppender for dao logger -->
+  <appender name="DaoAppender" class="org.apache.log4j.ConsoleAppender">
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern"
+             value="------DAO LOG------ :　%l -%m%n" />
+    </layout>
+  </appender>
+
+<!-- ********** RollingFileAppender ***************************************************** -->
+
+  <!-- RollingFileAppender -->
+  <appender name="RollingFileAppender"
+    class="org.apache.log4j.RollingFileAppender">
+    <param name="file" value="./logs/hasseigen.log" />
+    <param name="Append" value="true" />
+    <param name="Encoding" value="utf-8" />
+    <param name="MaxFileSize" value="10MB" />
+    <param name="MaxBackupIndex" value="10" />
+
+    <layout class="org.apache.log4j.PatternLayout">
+      <!-- The default pattern: Date Priority [Category] Message\n -->
+      <param name="ConversionPattern"
+        value="%d{yyyy-MM-dd HH:mm:ss,SSSZ} %-5p [%c{1}] (%t:%x) %m%n" />
+    </layout>
+  </appender>
+
+  <!-- FunctionRollingFileAppender -->
+  <appender name="FunctionRollingFileAppender"
+    class="org.apache.log4j.RollingFileAppender">
+    <param name="file" value="./logs/function.log" />
+    <param name="Append" value="true" />
+    <param name="Encoding" value="utf-8" />
+    <param name="MaxFileSize" value="10MB" />
+    <param name="MaxBackupIndex" value="10" />
+
+    <layout class="org.apache.log4j.PatternLayout">
+      <!-- The default pattern: Date Priority [Category] Message\n -->
+      <param name="ConversionPattern"
+        value="%d{yyyy-MM-dd HH:mm:ss,SSSZ} %-5p [%c{1}] (%t:%x) %m%n" />
+    </layout>
+  </appender>
+
+  <!-- BaseRollingFileAppender -->
+  <appender name="BaseRollingFileAppender"
+    class="org.apache.log4j.RollingFileAppender">
+    <param name="file" value="./logs/base.log" />
+    <param name="Append" value="true" />
+    <param name="Encoding" value="utf-8" />
+    <param name="MaxFileSize" value="10MB" />
+    <param name="MaxBackupIndex" value="10" />
+
+    <layout class="org.apache.log4j.PatternLayout">
+      <!-- The default pattern: Date Priority [Category] Message\n -->
+      <param name="ConversionPattern"
+        value="%d{yyyy-MM-dd HH:mm:ss,SSSZ} %-5p [%c{1}] (%t:%x) %m%n" />
+    </layout>
+  </appender>
+
+<!-- ********** DailyRollingFileAppender ***************************************************** -->
+
+  <!-- DailyRollingFileAppender -->
+  <appender name="DailyRollingFileAppender"
+            class="org.apache.log4j.DailyRollingFileAppender">
+    <param name="file" value="./logs/mc.log" />
+    <param name="append" value="true" />
+    <param name="datePattern" value=".yyyyMMdd" />
+    <param name="encoding" value="utf-8" />
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern"
+             value="%d{yyyy/MM/dd HH:mm:ss.SSS},%p,%t,%l,%m%n" />
+    </layout>
+  </appender>
+
+<!-- ********** Appender For UT ***************************************************** -->
+
+  <!-- ConsoleAppender for ut logger -->
+  <appender name="UTAppender" class="org.apache.log4j.ConsoleAppender">
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern"
+             value="★★★　単体テスト　★★★ %d{yyyy/MM/dd HH:mm:ss.SSS},%p,%t,%l,%m%n" />
+    </layout>
+  </appender>
+
+
+
+  <!-- ********** Logger ********** -->
+
+  <!-- BaseLog -->
+  <logger name="hasseigen.base">
+    <level value="INFO" />
+    <appender-ref ref="BaseRollingFileAppender" />
+  </logger>
+
+  <!-- FunctionLog -->
+  <logger name="hasseigen">
+    <level value="INFO" />
+    <appender-ref ref="FunctionRollingFileAppender" />
+  </logger>
+
+  <!-- MockLog -->
+  <logger name="hasseigen.mock">
+    <level value="DEBUG" />
+    <appender-ref ref="UTAppender" />
+  </logger>
+  <!-- DriverLog -->
+  <logger name="hasseigen.driver">
+    <level value="DEBUG" />
+    <appender-ref ref="UTAppender" />
+  </logger>
+
+  <!-- root logger -->
+  <root>
+    <level value="INFO" />
+    <appender-ref ref="RollingFileAppender" />
+    <!--
+    <appender-ref ref="ConsoleAppender" />
+    <appender-ref ref="RollingFileAppender" />
+    -->
+  </root>
+</log4j:configuration>

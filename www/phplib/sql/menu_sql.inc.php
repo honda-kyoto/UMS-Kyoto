@@ -1,0 +1,69 @@
+<?php
+/**********************************************************
+* File         : sql.inc.php
+* Authors      : mie tsutsui
+* Date         : 2013.01.10
+* Last Update  : 2013.01.10
+* Copyright    :
+***********************************************************/
+require_once("sql/common_sql.inc.php");
+
+$cmnSql['CHKSHIFTPAGE'] = "
+SELECT
+    mail_disused_flg,
+    mail_acc,
+    init_passwd_flg,
+    mail_reissue_flg
+FROM
+    user_mst
+WHERE
+    user_id = {0}
+";
+
+$cmnSql['GET_MENU_LIST'] = "
+SELECT
+    MM.menu_id,
+    MM.menu_name,
+    MM.menu_str,
+    MM.script_name,
+    MM.chk_col,
+    RM.chk_col_flg,
+    UE.app_entry_flg,
+    UE.mlist_entry_flg,
+    UE.guest_entry_flg,
+    UE.vdi_user_flg
+FROM
+    menu_mst AS MM,
+    category_mst AS CM,
+    role_menu_mst AS RM,
+    user_role_tbl AS UR,
+    user_entry_tbl AS UE
+WHERE
+    MM.category_id = CM.category_id AND
+    MM.menu_id = RM.menu_id AND
+    RM.role_id = UR.role_id AND
+    UR.user_id = UE.user_id AND
+    UR.del_flg = '0' AND
+    UE.del_flg = '0' AND
+    UR.user_id = {0}
+GROUP BY
+    MM.menu_id,
+    MM.menu_name,
+    MM.menu_str,
+    MM.script_name,
+    MM.chk_col,
+    RM.chk_col_flg,
+    UE.app_entry_flg,
+    UE.mlist_entry_flg,
+    UE.guest_entry_flg,
+    UE.vdi_user_flg,
+    CM.disp_num,
+    MM.disp_num
+ORDER BY
+    CM.disp_num,
+    MM.disp_num,
+    RM.chk_col_flg DESC
+";
+
+
+?>

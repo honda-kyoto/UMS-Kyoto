@@ -1,0 +1,2863 @@
+<?php
+/**********************************************************
+* File         : users_detail.class.php
+* Authors      : mie tsutsui
+* Date         : 2013.01.10
+* Last Update  : 2013.01.10
+* Copyright    :
+***********************************************************/
+
+require_once("mod/users_regist_common.class.php");
+require_once("mgr/users_detail_mgr.class.php");
+
+class users_detail extends users_regist_common
+{
+	//============================================
+	// コンストラクタ
+	//============================================
+	function __construct($request)
+	{
+		parent::__construct($request);
+
+		$this->page_title = "利用者編集";
+		$this->header_file = "users_detail_head.tpl";
+		// 基本処理オブジェクト生成
+		$this->oMgr = new users_detail_mgr();
+
+	}
+
+
+	function runInit()
+	{
+		// ログインユーザの権限によって初期画面を切り替える
+
+		list($mode_name, $disp_type) = $this->oMgr->getInitPageData();
+
+		$this->request['ctrl_mode_name'] = $mode_name;
+
+		if ($disp_type == '1')
+		{
+			$this->mode = 'input';
+		}
+		else
+		{
+			$this->mode = 'view';
+		}
+
+		$myMode = ucfirst($this->mode);
+		return $this->{"run$myMode"}();
+	}
+
+
+	/*======================================================
+	* Name         : runInput
+	* IN           :
+	* OUT          : 画面番号
+	* Discription  : ログイン画面
+	=======================================================*/
+	function runInput()
+	{
+		$this->setEditData();
+
+		if ($this->request['complete'] == "1")
+		{
+			$this->oMgr->setErr('C002');
+			$this->errMsg = $this->oMgr->getErrMsg();
+		}
+
+		return 1;
+	}
+
+	/*======================================================
+	 * Name         : runInput
+	* IN           :
+	* OUT          : 画面番号
+	* Discription  : ログイン画面
+	=======================================================*/
+	function runView()
+	{
+		$this->setViewData();
+
+		return 1;
+	}
+
+	function runUpdate()
+	{
+		// 入力値チェック
+		$ret = $this->checkInputdata();
+
+		// エラーあり
+		if (!$ret)
+		{
+			return 1;
+		}
+
+		// 画面ごとに処理を分ける
+		$param = array();
+
+		switch ($this->request['ctrl_mode_name'])
+		{
+			case 'base':
+				$ret = $this->oMgr->updateUserBaseData($this->request);
+				break;
+			case 'ncvc':
+				$ret = $this->oMgr->updateUserNcvcData($this->request);
+				break;
+			case 'mail':
+				break;
+			case 'his':
+				if ($this->request['edit_mode'] == 'history')
+				{
+					$ret = $this->oMgr->updateUserHisHistoryData(&$this->request);
+				}
+				else
+				{
+					$ret = $this->oMgr->updateUserHisData(&$this->request);
+				}
+				$param['list_no'] = $this->request['list_no'];
+				break;
+			case 'salary':
+				$ret = $this->oMgr->updateSalaryPasswd($this->request);
+				break;
+			case 'card':
+				break;
+		}
+
+		if (!$ret)
+		{
+			$this->oMgr->showSystemError();
+		}
+
+		// リダイレクト
+		$this->postComplete($param);
+	}
+
+	function runMailReissue()
+	{
+		$ret = $this->oMgr->updateUserMailReissueFlg($this->request);
+
+		if (!$ret)
+		{
+			$this->oMgr->showSystemError();
+		}
+
+		// リダイレクト
+		$this->postComplete();
+	}
+
+	function runSendonTypeChange()
+	{
+		$ret = $this->oMgr->updateSendonType($this->request['user_id'], $this->request['sendon_type']);
+
+		if (!$ret)
+		{
+			$this->oMgr->showSystemError();
+		}
+
+		// リダイレクト
+		$this->postComplete();
+	}
+
+	function runSendonAddrAdd()
+	{
+		// 入力値チェック
+		$ret = $this->checkSendonAddr();
+
+		// エラーあり
+		if (!$ret)
+		{
+			$this->setEditData();
+			return 1;
+		}
+
+		$ret = $this->oMgr->insertSendonAddr($this->request['user_id'], $this->request['sendon_addr']);
+
+		if (!$ret)
+		{
+			$this->oMgr->showSystemError();
+		}
+
+		// リダイレクト
+		$this->postComplete();
+	}
+
+	function runSendonAddrDelete()
+	{
+		$ret = $this->oMgr->deleteSendonAddr($this->request['user_id'], $this->request['list_no']);
+
+		if (!$ret)
+		{
+			$this->oMgr->showSystemError();
+		}
+
+		// リダイレクト
+		$this->postComplete();
+	}
+
+	function runOldmailAddrAdd()
+	{
+		// 入力値チェック
+		$ret = $this->checkOldmailAddr();
+
+		// エラーあり
+		if (!$ret)
+		{
+			$this->setEditData();
+			return 1;
+		}
+
+		$ret = $this->oMgr->insertOldmailAddr($this->request['user_id'], $this->request['oldmail_addr']);
+
+		if (!$ret)
+		{
+			$this->oMgr->showSystemError();
+		}
+
+		// リダイレクト
+		$this->postComplete();
+	}
+
+	function runOldmailAddrDelete()
+	{
+		$ret = $this->oMgr->deleteOldmailAddr($this->request['user_id'], $this->request['list_no']);
+
+		if (!$ret)
+		{
+			$this->oMgr->showSystemError();
+		}
+
+		// リダイレクト
+		$this->postComplete();
+	}
+
+	function runMailAccValid()
+	{
+		$ret = $this->oMgr->setMailAccValid($this->request['user_id']);
+
+		if (!$ret)
+		{
+			$this->oMgr->showSystemError();
+		}
+
+		// リダイレクト
+		$this->postComplete();
+
+	}
+
+	function runMailAccInvalid()
+	{
+		$ret = $this->oMgr->setMailAccInvalid($this->request['user_id']);
+
+		if (!$ret)
+		{
+			$this->oMgr->showSystemError();
+		}
+
+		// リダイレクト
+		$this->postComplete();
+
+	}
+
+	function runMailAccExcCmt()
+	{
+		$ret = $this->oMgr->setMailAccExcCmt($this->request['user_id'], $this->request['exception_note']);
+
+		if (!$ret)
+		{
+			$this->oMgr->showSystemError();
+		}
+
+		// リダイレクト
+		$this->postComplete();
+
+	}
+
+	function runChangeMain()
+	{
+		$ret = $this->oMgr->changeHisMainData($this->request['user_id'], $this->request['list_no']);
+
+		if (!$ret)
+		{
+			$this->oMgr->showSystemError();
+		}
+
+		$param['list_no'] = "0";
+
+		// リダイレクト
+		$this->postComplete();
+	}
+
+	function runCardAdd()
+	{
+		$ret = $this->oMgr->addUserCardData($this->request);
+
+		if (!$ret)
+		{
+			$this->oMgr->showSystemError();
+		}
+
+		// リダイレクト
+		$this->postComplete();
+	}
+
+	function runCardReissue()
+	{
+		// 理由
+		if (!$this->oMgr->checkEmpty($this->request['reissue_kbn'][$this->request['list_no']]))
+		{
+			// エラーメッセージをセット
+			$this->oMgr->setErr('E007',"再発行理由");
+		}
+
+		// エラーなし
+		if (sizeof($this->oMgr->aryErrMsg) > 0)
+		{
+			$this->errMsg = $this->oMgr->getErrMsg();
+			$this->setEditData();
+			return 1;
+		}
+
+		$ret = $this->oMgr->reissueUserCardData($this->request);
+
+		if (!$ret)
+		{
+			$this->oMgr->showSystemError();
+		}
+
+		// リダイレクト
+		$this->postComplete();
+
+	}
+
+	function runCardStop()
+	{
+		// 理由
+		if (!$this->oMgr->checkEmpty($this->request['disuse_kbn'][$this->request['list_no']]))
+		{
+			// エラーメッセージをセット
+			$this->oMgr->setErr('E007',"停止理由");
+		}
+
+		// エラーなし
+		if (sizeof($this->oMgr->aryErrMsg) > 0)
+		{
+			$this->errMsg = $this->oMgr->getErrMsg();
+			$this->setEditData();
+			return 1;
+		}
+
+		$ret = $this->oMgr->stopUserCardData($this->request);
+
+		if (!$ret)
+		{
+			$this->oMgr->showSystemError();
+		}
+
+		// リダイレクト
+		$this->postComplete();
+	}
+
+
+	/*======================================================
+	 * Name         : runReissuePassword
+	* IN           :
+	* OUT          :
+	* Discription  :
+	=======================================================*/
+	function runReissuePassword()
+	{
+		$ret = $this->oMgr->reissuePassword($this->request['list_no'], $this->request['user_id'], $this->request['passwd']);
+//Debug_Trace($this->request, 987);
+		echo $ret;
+	}
+
+
+	function runRetireHis()
+	{
+		if (!$this->oMgr->checkEmpty($this->request['retire_date']))
+		{
+			// エラーメッセージをセット
+			$this->oMgr->setErr('E001',"退職日");
+		}
+		else if (!$this->oMgr->checkDateFormat($this->request['retire_date']))
+		{
+			// エラーメッセージをセット
+			$param = array();
+			$param[0] = "退職日";
+			$param[1] = "yyyy/mm/dd";
+			$this->oMgr->setErr('E004', $param);
+		}
+		else if (!$this->oMgr->checkDate($this->request['retire_date']))
+		{
+			// エラーメッセージをセット
+			$this->oMgr->setErr('E013',"退職日");
+		}
+
+		// エラーなし
+		if (sizeof($this->oMgr->aryErrMsg) > 0)
+		{
+			$this->errMsg = $this->oMgr->getErrMsg();
+			$this->setHisErrorPageData();
+
+			return 1;
+		}
+
+
+		$ret = $this->oMgr->retireHisData($this->request);
+
+		if (!$ret)
+		{
+			$this->oMgr->showSystemError();
+		}
+
+		// リダイレクト
+		$param = array();
+		$param['list_no'] = $this->request['list_no'];
+		$this->postComplete($param);
+	}
+
+	function runDelReserve()
+	{
+		$ret = $this->oMgr->deleteHisReserve($this->request['user_id'], $this->request['list_no']);
+
+		if (!$ret)
+		{
+			$this->oMgr->showSystemError();
+		}
+
+		// リダイレクト
+		$param = array();
+		$param['list_no'] = $this->request['list_no'];
+		$this->postComplete($param);
+	}
+
+	function runDelBaseReserve()
+	{
+		$ret = $this->oMgr->deleteBaseReserve($this->request['user_id']);
+
+		if (!$ret)
+		{
+			$this->oMgr->showSystemError();
+		}
+
+		// リダイレクト
+		$this->postComplete();
+	}
+
+	function runDelNcvcReserve()
+	{
+		$ret = $this->oMgr->deleteNcvcReserve($this->request['user_id']);
+
+		if (!$ret)
+		{
+			$this->oMgr->showSystemError();
+		}
+
+		// リダイレクト
+		$this->postComplete();
+	}
+
+	function runPrint()
+	{
+		$user_id = $_SESSION['password_user_id'];
+		$col_name = $_SESSION['password_col_name'];
+		$list_no = $_SESSION['password_list_no'];
+
+		$aryUser = $this->oMgr->getUserBaseData($user_id);
+
+		$this->output['kanji_name'] = $aryUser['kanjisei'] . "　" . $aryUser['kanjimei'];
+
+		if ($col_name == 'password')
+		{
+			$aryHis = $this->oMgr->getUserHisData($user_id, $list_no);
+
+			$this->output['staffcode'] = $aryHis['staffcode'];
+			$this->output['idname'] = "ログインID";
+			$this->output['passwd'] = $aryHis['password'];
+		}
+		else
+		{
+			$aryUser = $this->oMgr->getUserNcvcData($user_id);
+			$this->output['passwd'] = $aryUser['login_passwd'];
+			$this->output['staffcode'] = $aryUser['login_id'];
+			$this->output['idname'] = "統合ID";
+		}
+
+		$this->output['print_time'] = date("Y年m月d日H時i分");
+
+		return 1;
+	}
+
+	/*======================================================
+	* Name         : runPreIDPrint
+	* IN           :
+	* OUT          : [1]正常処理 [0]異常終了
+	* Discription  :
+	=======================================================*/
+	function runPreIDPrint()
+	{
+		$user_id = $this->request['user_id'];
+		$list_no = $this->request['list_no'];
+
+		$_SESSION['print_user_id'] = $user_id;
+		$_SESSION['print_list_no'] = $list_no;
+
+		echo "1";
+	}
+
+	/*======================================================
+	* Name         : runIDPrint
+	* IN           :
+	* OUT          : [1]正常処理 [0]異常終了
+	* Discription  :
+	=======================================================*/
+	function runIDPrint()
+	{
+		$this->setIDPrintData();
+
+		$print_time = date("Y年m月d日");
+		$this->output['print_time'] = $print_time;
+
+		return 1;
+	}
+
+	function runUpdateKyotoCard()
+	{
+		// 入力値チェック
+		$ret = $this->checkKyotoCardData();
+
+		// エラーあり
+		if (!$ret)
+		{
+			$this->setEditData();
+			return 1;
+		}
+
+		// ファイル操作
+		$ret = $this->oMgr->relationKyotoCardData(&$this->request);
+
+		// エラーあり
+		if (!$ret)
+		{
+			$this->errMsg = $this->oMgr->getErrMsg();
+			$this->setEditData();
+			return 1;
+		}
+
+		$ret = $this->oMgr->updateKyotoCard(&$this->request);
+
+		if (!$ret)
+		{
+			$this->oMgr->showSystemError();
+		}
+
+		// リダイレクト
+		$param['list_no'] = $this->request['list_no'];
+		$this->postComplete($param);
+	}
+
+	function runChangeKyotoCardMain()
+	{
+		$ret = $this->oMgr->changeKyotoCardMainData($this->request['user_id'], $this->request['list_no']);
+
+		if (!$ret)
+		{
+			$this->oMgr->showSystemError();
+		}
+
+		$param['list_no'] = "0";
+
+		// リダイレクト
+		$this->postComplete();
+	}
+
+	function setEditData()
+	{
+		$this->request['disp_type_name'] = 'edit';
+
+		unset($_SESSION['password_user_id']);
+		unset($_SESSION['password_col_name']);
+		unset($_SESSION['password_list_no']);
+
+
+		$this->disabled = array();
+
+		// 画面ごとに取得データを分ける
+
+		switch ($this->request['ctrl_mode_name'])
+		{
+			case 'base':
+				$this->setBaseEditData();
+				break;
+			case 'ncvc':
+				$this->setNcvcEditData();
+				break;
+			case 'mail':
+
+				// 共通ヘッダの情報作成
+				$this->setCommonHeaderData();
+
+				$this->request['sendon_type'] = $this->oMgr->getUserSendonHead($this->request['user_id']);
+
+				$this->output['sendon_list'] = $this->oMgr->getUserSendonList($this->request['user_id']);
+
+				$this->output['oldmail_list'] = $this->oMgr->getUserOldmailList($this->request['user_id']);
+
+				$this->request['mail_reissue_flg'] = $this->oMgr->getUserMailReissueFlg($this->request['user_id']);
+
+				// 期限切れチェック(編集画面のみ+メールアカウント設定ユーザのみ)
+				$aryTmp = $this->oMgr->getUserNcvcData($this->request['user_id']);
+				$this->request['mail_over_flg'] = $aryTmp['mail_over_flg'];
+				$this->request['is_retire_date'] = false;
+				if ($this->request['mail_over_flg'] == "1")
+				{
+					if ($aryTmp['mail_acc'])
+					{
+						$this->output['user_mail_addr'] = $aryTmp['mail_acc'] . USER_MAIL_DOMAIN;
+					}
+
+					// 無効登録チェック
+					$aryInv = $this->oMgr->getInvalidAccData($this->request['user_id']);
+					$this->request['invalid_flg'] = $aryInv['invalid_flg'];
+					$this->request['exception_note'] = $aryInv['exception_note'];
+					if ($this->request['invalid_flg'] == '1')
+					{
+						$this->request['exception_note'] = "";
+					}
+				}
+
+				break;
+			case 'his':
+
+				$this->setHisEditData();
+
+				break;
+			case 'salary':
+
+				// 共通ヘッダの情報作成
+				$this->setCommonHeaderData();
+
+				break;
+			case 'card':
+
+				if (defined ("ORIGINAL_NAME"))
+				{
+					$funcName = "setCardEditData_" . ORIGINAL_NAME;
+					$this->${funcName}();
+				}
+				else
+				{
+					$this->setCardEditData();
+				}
+
+				break;
+		}
+	}
+
+	function setBaseEditData()
+	{
+		if ($this->request['edit_mode'] == 'reserve')
+		{
+			$reserve_flg = true;
+
+			$this->request['reserve_flg'] = "1";
+			$aryTmp = $this->oMgr->getUserBaseData($this->request['user_id'], true);
+
+			$this->setRequestData($aryTmp);
+		}
+		else
+		{
+			$reserve_flg = false;
+
+			$aryTmp = $this->oMgr->getUserBaseData($this->request['user_id']);
+
+			$this->setRequestData($aryTmp);
+
+			// 予約データを取得
+			$aryTmp = $this->oMgr->getUserBaseData($this->request['user_id'], true);
+
+			if ($aryTmp['staff_id'] != "")
+			{
+				$this->has_reserve_data = true;
+				$this->output['reflect_date'] = $aryTmp['reflect_date'];
+				$this->output['reserve_user_name'] = $this->oMgr->getUserName($aryTmp['update_id']);
+			}
+		}
+
+		// サブ所属
+		$aryTmp = $this->oMgr->getSubBelongData($this->request['user_id'], $reserve_flg);
+
+		$belong_cnt = 0;
+		if (is_array($aryTmp))
+		{
+			foreach ($aryTmp AS $no => $aryData)
+			{
+				$this->setRequestData($aryData, $no);
+				$belong_cnt++;
+			}
+		}
+		if ($belong_cnt == 0)
+		{
+			// サブ属性
+			$this->request['sub_belong_chg_id'] = array();
+			$this->request['sub_belong_chg_id'][1] = "";
+		}
+
+		// サブ職種
+		$aryTmp = $this->oMgr->getSubJobData($this->request['user_id'], $reserve_flg);
+
+		$job_cnt = 0;
+		if (is_array($aryTmp))
+		{
+			foreach ($aryTmp AS $no => $aryData)
+			{
+				$this->setRequestData($aryData, $no);
+				$job_cnt++;
+			}
+		}
+		if ($job_cnt == 0)
+		{
+			$this->request['sub_job_id'] = array();
+			$this->request['sub_job_id'][1] = "";
+		}
+
+		// サブ役職
+		$aryTmp = $this->oMgr->getSubPostData($this->request['user_id'], $reserve_flg);
+
+		$post_cnt = 0;
+		if (is_array($aryTmp))
+		{
+			foreach ($aryTmp AS $no => $aryData)
+			{
+				$this->setRequestData($aryData, $no);
+				$post_cnt++;
+			}
+		}
+		if ($post_cnt == 0)
+		{
+			$this->request['sub_post_id'] = array();
+			$this->request['sub_post_id'][1] = "";
+		}
+
+		// サブ職員番号
+		$aryTmp = $this->oMgr->getSubStaffIdData($this->request['user_id'], $reserve_flg);
+
+		$staff_id_cnt = 0;
+		if (is_array($aryTmp))
+		{
+			foreach ($aryTmp AS $no => $aryData)
+			{
+				$this->setRequestData($aryData, $no);
+				$staff_id_cnt++;
+			}
+		}
+		if ($job_cnt == 0)
+		{
+			$this->request['sub_staff_id'] = array();
+			$this->request['sub_staff_id'][1] = "";
+		}
+
+	}
+
+	function setNcvcEditData()
+	{
+		// ヘッダ用の基本情報
+		$aryTmp = $this->oMgr->getUserBaseData($this->request['user_id']);
+		$this->setOutputData($aryTmp);
+
+		// NCVC情報取得
+		if ($this->request['edit_mode'] == 'reserve')
+		{
+			$reserve_flg = true;
+
+			$this->request['reserve_flg'] = "1";
+			$aryTmp = $this->oMgr->getUserNcvcData($this->request['user_id'], true);
+			$aryTmp['login_passwd'] = "";
+
+			$this->setRequestData($aryTmp);
+		}
+		else
+		{
+			$reserve_flg = false;
+
+			$aryTmp = $this->oMgr->getUserNcvcData($this->request['user_id']);
+			$aryTmp['login_passwd'] = "";
+
+			$this->setRequestData($aryTmp);
+
+			// 予約データを取得
+			$aryTmp = $this->oMgr->getUserNcvcData($this->request['user_id'], true);
+
+			if ($aryTmp['start_date'] != "")
+			{
+				$this->has_reserve_data = true;
+				$this->output['reflect_date'] = $aryTmp['reflect_date'];
+				$this->output['reserve_user_name'] = $this->oMgr->getUserName($aryTmp['update_id']);
+			}
+		}
+
+		// 権限データ
+		$aryTmp = $this->oMgr->getRoleData($this->request['user_id'], $reserve_flg);
+
+		$this->request['user_type_id'] = $aryTmp['user_type_id'];
+		$this->request['user_role_id'] = $aryTmp['user_role_id'];
+
+		// PW再発行証明書用
+		$_SESSION['password_user_id'] = $this->request['user_id'];
+
+
+		// 期限切れの場合
+		$this->request['is_retire_date'] = false;
+		$this->output['is_retire_date'] = false;
+		if ($this->request['end_date'] != "")
+		{
+			$this->request['is_retire_date'] = $this->checkRetireDate($this->request['end_date']);
+		}
+		if ($this->output['end_date'] != "")
+		{
+			$this->output['is_retire_date'] = $this->checkRetireDate($this->output['end_date']);
+		}
+
+		if ($this->request['is_retire_date'] || $this->output['is_retire_date'])
+		{
+			// 無効登録チェック
+			$aryInv = $this->oMgr->getInvalidAccData($this->request['user_id']);
+			$this->output['invalid_flg'] = $aryInv['invalid_flg'];
+		}
+
+	}
+
+	function setHisEditData()
+	{
+		// ヘッダ用の基本情報
+		$aryTmp = $this->oMgr->getUserBaseData($this->request['user_id']);
+
+		$this->request['pbno'] = $aryTmp['pbno'];
+
+		$aryTmp['sex'] = (string)$aryTmp['sex'];
+		if ($aryTmp['sex'] != "")
+		{
+			$aryTmp['sex_name'] = $this->oMgr->getValue('sex', $aryTmp['sex']);
+		}
+		else
+		{
+			$aryTmp['sex_name'] = "※未登録";
+		}
+		if ($aryTmp['birthday'] != "")
+		{
+			$aryTmp['birthday_text'] = $aryTmp['birth_year'] . " 年 " . $aryTmp['birth_mon'] . " 月 " . $aryTmp['birth_day'] . " 日";
+		}
+		else
+		{
+			$aryTmp['birthday_text'] = "※未登録";
+		}
+
+		if ($aryTmp['pbno'] == "")
+		{
+			$aryTmp['pbno'] = "※未登録";
+		}
+
+		$this->setOutputData($aryTmp);
+
+		// HIS情報取得
+		$aryListNo = $this->oMgr->getHisListNo($this->request['user_id']);
+
+		$this->is_main_data = false;
+
+		$max_no = "";
+		if (is_array($aryListNo))
+		{
+			$max_no = array_pop($aryListNo);
+		}
+
+		if ($this->request['list_no'] == "")
+		{
+			// 通常はメインを指定
+			$this->request['list_no'] = "0";
+
+			// １件も登録がない場合は新規
+			if ($max_no == "")
+			{
+				$this->request['list_no'] = "new";
+				$this->is_main_data = true;
+			}
+		}
+
+		if ($this->request['list_no'] == "0")
+		{
+			$this->is_main_data = true;
+		}
+
+		$this->reserve_data_only = false;
+		$this->request['immediate_flg'] = "1";
+
+		// DBから取得しない場合のある項目を初期化
+		$this->request['history_note'] = "";
+		$this->request['his_history_kbn'] = "";
+
+		if ($this->request['edit_mode'] == 'history')
+		{
+			// 履歴の場合
+			$aryTmp = $this->oMgr->getUserHisHistoryData($this->request['user_id'], @$this->request['list_no'], $this->request['history_no']);
+
+			$aryTmp['password'] = "";
+
+			$this->setRequestData($aryTmp);
+			$this->setOutputData($aryTmp);
+
+
+			// コード類を名称に
+			$this->setHisCodesToName();
+
+			$this->output['edit_mode_name'] = "履歴情報";
+		}
+		else if ($this->request['edit_mode'] != "")
+		{
+			// 編集モード別の設定
+			if ($this->request['edit_mode'] == "reserve")
+			{
+				$reserve_flg = true;
+
+				$this->output['edit_mode_name'] = "予約データ";
+				$this->request['immediate_flg'] = "2";
+			}
+			$aryTmp = $this->oMgr->getUserHisData($this->request['user_id'], @$this->request['list_no'], $reserve_flg);
+
+			$aryTmp['password'] = "";
+
+			$this->setRequestData($aryTmp);
+		}
+		else if ($this->request['list_no'] != "new")
+		{
+			// 新規以外の場合データを取得
+
+			$aryTmp = $this->oMgr->getUserHisData($this->request['user_id'], @$this->request['list_no']);
+
+			$aryTmp['password'] = "";
+
+			$this->setRequestData($aryTmp);
+
+			if ($aryTmp['staffcode'] == "")
+			{
+				// データがない場合
+				$this->reserve_data_only = true;
+			}
+
+			// 予約データを取得
+			$aryTmp = $this->oMgr->getUserHisData($this->request['user_id'], @$this->request['list_no'], true);
+
+			if ($aryTmp['staffcode'] != "")
+			{
+				$this->has_reserve_data = true;
+				$this->output['reserve_send_date'] = $aryTmp['send_date'];
+				$this->output['reserve_user_name'] = $this->oMgr->getUserName($aryTmp['update_id']);
+			}
+			else if ($this->reserve_data_only)
+			{
+				// 本データも予約データもない場合
+				$this->request['list_no'] = "";
+				self::setEditData();
+			}
+
+			// 履歴作成
+			$this->setHisHistoryData();
+		}
+		else
+		{
+			$this->request['send_date'] = "";
+			$this->request['staffcode'] = "";
+			$this->request['kanjiname'] = $this->output['kanjisei'] . "　" . $this->output['kanjimei'];
+			$this->request['kananame'] = $this->output['kanasei'] . "　" . $this->output['kanamei'];
+			$this->request['password'] = "";
+			$this->request['wardstatus'] = "";
+			$this->request['wardcode'] = "";
+			$this->request['professionstatus'] = "";
+			$this->request['professioncode'] = "";
+			$this->request['gradecode'] = "";
+			$this->request['validstartdate'] = "";
+			$this->request['validenddate'] = "2099/12/31";
+			$this->request['deptstatus'] = "";
+			$this->request['deptcode'] = "";
+			$this->request['appcode'] = "";
+			$this->request['deptgroupcode'] = "";
+		}
+
+		if ($this->request['immediate_flg'] == "1")
+		{
+			$this->disabled['send_date'] = "disabled";
+			$this->request['send_date'] = "";
+		}
+
+		// 予約の場合
+		$this->has_original_data = true;
+		if ($this->request['edit_mode'] == "reserve")
+		{
+			$aryTmp = $this->oMgr->getUserHisData($this->request['user_id'], @$this->request['list_no']);
+
+			if ($aryTmp['staffcode'] == "")
+			{
+				$this->has_original_data = false;
+			}
+		}
+
+		// 退職の場合
+		if ($this->request['validenddate'] != "")
+		{
+			$this->request['is_retire_date'] = $this->checkRetireDate($this->request['validenddate']);
+		}
+		if ($this->output['validenddate'] != "")
+		{
+			$this->output['is_retire_date'] = $this->checkRetireDate($this->output['validenddate']);
+		}
+
+	}
+
+	function setCardEditData()
+	{
+		// 共通ヘッダの情報作成
+		$this->setCommonHeaderData();
+
+		// カード情報取得
+		$aryTmp = $this->oMgr->getUserCardData($this->request['user_id']);
+
+		$card_cnt = 0;
+		if (is_array($aryTmp))
+		{
+			foreach ($aryTmp AS $no => $aryData)
+			{
+				$aryData['card_no'] = sprintf("%08d%02d", $aryData['ident_code'], $aryData['issue_cnt']);
+				$this->setOutputData($aryData, $no);
+				$card_cnt++;
+			}
+		}
+
+		$this->aryCardBase = array();
+
+		// HIS情報取得
+		$aryListNo = $this->oMgr->getHisListNo($this->request['user_id']);
+
+		if (is_array($aryListNo) && count($aryListNo) > 0)
+		{
+			$aryWardStatus = $this->oMgr->getAry('wardstatus');
+			$aryWard = $this->oMgr->getWardAry();
+			$aryProfession = $this->oMgr->getProfessionAry();
+
+			foreach ($aryListNo AS $list_no)
+			{
+				// HIS情報取得
+				$aryTmp = $this->oMgr->getUserHisData($this->request['user_id'], $list_no);
+				$base_no = $aryTmp['staffcode'] . "　" . $aryWardStatus[$aryTmp['wardstatus']] . "　" . $aryWard[$aryTmp['wardcode']] . "　" . $aryProfession[$aryTmp['professioncode']];
+				$ident_code = $aryTmp['staffcode'];
+
+				$this->aryCardBase[$list_no]['base_no'] = htmlspecialchars($base_no);
+				$this->aryCardBase[$list_no]['ident_code'] = htmlspecialchars($ident_code);
+
+				$this->aryCardBase[$list_no]['has_card_data'] = false;
+				if (@$this->output['ident_code'][$list_no] == $ident_code)
+				{
+					$this->aryCardBase[$list_no]['has_card_data'] = true;
+				}
+			}
+		}
+		else
+		{
+			$aryTmp = $this->oMgr->getUserBaseData($this->request['user_id']);
+
+			if ($aryTmp['staff_id'] != "")
+			{
+				$base_no = $aryTmp['staff_id'];
+				$ident_code = sprintf("%06d%02d", $base_no, 1);
+
+				$this->aryCardBase[-1]['base_no'] = htmlspecialchars($base_no);
+				$this->aryCardBase[-1]['ident_code'] = htmlspecialchars($ident_code);
+
+				$this->aryCardBase[-1]['has_card_data'] = false;
+				if (@$this->output['ident_code'][-1] == $ident_code)
+				{
+					$this->aryCardBase[-1]['has_card_data'] = true;
+				}
+
+			}
+		}
+	}
+
+	function setCardEditData_kyoto()
+	{
+		// 共通ヘッダの情報作成
+		$this->setCommonHeaderData();
+
+		// カード情報取得
+		$aryListNo = $this->oMgr->getKyotoCardListNo($this->request['user_id']);
+
+		$this->is_main_data = false;
+
+		$max_no = "";
+		if (is_array($aryListNo))
+		{
+			$max_no = array_pop($aryListNo);
+		}
+
+		if ($this->request['list_no'] == "")
+		{
+			// 通常はメインを指定
+			$this->request['list_no'] = "0";
+
+			// １件も登録がない場合は新規
+			if ($max_no == "")
+			{
+				$this->request['list_no'] = "new";
+				$this->is_main_data = true;
+			}
+		}
+
+		if ($this->request['list_no'] == "0")
+		{
+			$this->is_main_data = true;
+		}
+
+		if ($this->request['list_no'] != "new")
+		{
+			// 新規以外の場合データを取得
+
+			$aryTmp = $this->oMgr->getKyotoCardData($this->request['user_id'], @$this->request['list_no']);
+
+			$this->setRequestData($aryTmp);
+
+			if ($this->request['card_type'] == "2")
+			{
+				$this->output['card_type_disabled'] = "disabled";
+			}
+		}
+		else
+		{
+			$this->request['card_type'] = "2";	// ハンズフリータグ
+
+			for ($i = 1 ; $i <= 25 ; $i++)
+			{
+				$col = "permission_" . $i;
+				$this->request[$col] = "";
+			}
+			$this->request['reissue_flg'] = "";
+			$this->request['suspend_flg'] = "";
+			$this->request['del_flg'] = "";
+
+			for ($i = 1 ; $i <= 4 ; $i++)
+			{
+				$col = "belong_info_" . $i;
+				$this->request[$col] = "";
+			}
+			$this->request['key_number'] = "";
+			$this->request['uid'] = "";
+			$this->request['start_date'] = date("Y/m/d");
+			$this->request['end_date'] = "2030/12/31";
+		}
+	}
+
+	function checkRetireDate($date)
+	{
+		list ($retire_y, $retire_m, $retire_d) = explode("/", $date);
+
+		//$retire_date = sprintf("%04d-%02d-%02d", $retire_y, $retire_m, $retire_d);
+
+		//if (strtotime(date('Y-m-d')) > strtotime($retire_date))
+
+		/* strtotime では 2099/12/31 データに対応できないためチェック方法を変更 */
+
+		$today = date('Ymd');
+		$retire_date = sprintf("%04d%02d%02d", $retire_y, $retire_m, $retire_d);
+		if ((int)$today > (int)$retire_date)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	function setCommonHeaderData()
+	{
+		// ヘッダ用の基本情報
+		$aryTmp = $this->oMgr->getUserBaseData($this->request['user_id']);
+
+		$aryJob = $this->oMgr->getJobAry();
+		$aryPost = $this->oMgr->getPostAry();
+
+		$aryTmp['belong_name'] = $this->oMgr->getBelongName(&$aryTmp);
+		$aryTmp['job_name'] = $aryJob[$aryTmp['job_id']];
+		$aryTmp['post_name'] = $aryPost[$aryTmp['post_id']];
+
+		$this->setOutputData($aryTmp);
+	}
+
+	function setViewData()
+	{
+		$this->request['disp_type_name'] = 'view';
+
+		// NCVC用
+		unset($_SESSION['password_user_id']);
+		unset($_SESSION['password_col_name']);
+		unset($_SESSION['password_list_no']);
+
+
+		// 画面ごとに取得データを分ける
+
+		switch ($this->request['ctrl_mode_name'])
+		{
+			case 'base':
+				$this->setBaseViewData();
+
+				break;
+			case 'ncvc':
+				// ヘッダ用の基本情報
+				$aryTmp = $this->oMgr->getUserBaseData($this->request['user_id']);
+
+				$this->setOutputData($aryTmp);
+
+				// NCVC情報取得
+				$aryTmp = $this->oMgr->getUserNcvcData($this->request['user_id']);
+
+				$this->request['mail_disused_flg'] = $aryTmp['mail_disused_flg'];
+				$this->request['garoon_disused_flg'] = $aryTmp['garoon_disused_flg'];
+				$this->request['mlist_disused_flg'] = $aryTmp['mlist_disused_flg'];
+				$this->request['vdi_user_flg'] = $aryTmp['vdi_user_flg'];
+				$this->request['ftrans_user_flg'] = $aryTmp['ftrans_user_flg'];
+				$this->request['ftrans_user_kbn'] = $aryTmp['ftrans_user_kbn'];
+
+				$this->setOutputData($aryTmp);
+
+				// 権限データ
+				$aryTmp = $this->oMgr->getRoleData($this->request['user_id']);
+
+				$this->request['user_type_id'] = $aryTmp['user_type_id'];
+				$this->request['user_role_id'] = $aryTmp['user_role_id'];
+
+				// PW再発行証明書用
+				$_SESSION['password_user_id'] = $this->request['user_id'];
+
+
+				// 期限切れの場合
+				$this->output['is_retire_date'] = false;
+				if ($this->output['end_date'] != "")
+				{
+					$this->output['is_retire_date'] = $this->checkRetireDate($this->output['end_date']);
+				}
+
+				break;
+			case 'mail':
+
+				// 共通ヘッダの情報作成
+				$this->setCommonHeaderData();
+
+				$this->request['sendon_type'] = $this->oMgr->getUserSendonHead($this->request['user_id']);
+
+				$this->output['sendon_list'] = $this->oMgr->getUserSendonList($this->request['user_id']);
+
+				$this->output['oldmail_list'] = $this->oMgr->getUserOldmailList($this->request['user_id']);
+
+				$this->request['mail_reissue_flg'] = $this->oMgr->getUserMailReissueFlg($this->request['user_id']);
+
+				break;
+			case 'his':
+				$this->setHisViewData();
+
+				break;
+			case 'salary':
+
+				// 共通ヘッダの情報作成
+				$this->setCommonHeaderData();
+
+				// パスワード登録の有無
+				$passwd_exists = $this->oMgr->existsSalaryExists($this->request['user_id']);
+
+				if ($passwd_exists)
+				{
+					$this->output['salary_passwd_msg'] = "パスワードが登録されています。";
+				}
+				else
+				{
+					$this->output['salary_passwd_msg'] = "パスワードは登録されていません。";
+				}
+
+				break;
+			case 'card':
+
+
+				if (defined ("ORIGINAL_NAME"))
+				{
+					$funcName = "setCardViewData_" . ORIGINAL_NAME;
+					$this->${funcName}();
+				}
+				else
+				{
+					$this->setCardViewData();
+				}
+
+
+				break;
+		}
+	}
+
+	function setBaseViewData()
+	{
+		$aryJob = $this->oMgr->getJobAry();
+		$aryPost = $this->oMgr->getPostAry();
+
+		$aryTmp = $this->oMgr->getUserBaseData($this->request['user_id']);
+
+		$aryTmp['sex_name'] = $this->oMgr->getValue('sex', $aryTmp['sex']);
+		$aryTmp['joukin_kbn_name'] = $this->oMgr->getValue('joukin_kbn', $aryTmp['joukin_kbn']);
+		$aryTmp['belong_name'] = $this->oMgr->getBelongName(&$aryTmp);
+		$aryTmp['job_name'] = $aryJob[$aryTmp['job_id']];
+		$aryTmp['post_name'] = $aryPost[$aryTmp['post_id']];
+
+		$this->setOutputData($aryTmp);
+
+		$this->request['staff_id_flg'] = $aryTmp['staff_id_flg'];
+
+		// サブ所属
+		$aryTmp = $this->oMgr->getSubBelongData($this->request['user_id']);
+
+		$belong_cnt = 0;
+		if (is_array($aryTmp))
+		{
+			foreach ($aryTmp AS $no => $aryData)
+			{
+				$this->output['sub_belong_chg_id'][$no] = $aryData['sub_belong_chg_id'];
+
+				$param = array();
+				$param['belong_chg_id'] = $aryData['sub_belong_chg_id'];
+
+				$this->output['sub_belong_name'][$no] = $this->oMgr->getBelongName(&$param);
+			}
+		}
+
+		// サブ職種
+		$aryTmp = $this->oMgr->getSubJobData($this->request['user_id']);
+
+		if (is_array($aryTmp))
+		{
+			foreach ($aryTmp AS $no => $aryData)
+			{
+				$this->output['sub_job_name'][$no] = $aryJob[$aryData['sub_job_id']];
+			}
+		}
+
+		// サブ役職
+		$aryTmp = $this->oMgr->getSubPostData($this->request['user_id']);
+
+		if (is_array($aryTmp))
+		{
+			foreach ($aryTmp AS $no => $aryData)
+			{
+				$this->output['sub_post_name'][$no] = $aryPost[$aryData['sub_post_id']];
+			}
+		}
+
+
+		// サブ職員番号
+		$aryTmp = $this->oMgr->getSubStaffIdData($this->request['user_id']);
+
+		if (is_array($aryTmp))
+		{
+			foreach ($aryTmp AS $no => $aryData)
+			{
+				$this->output['sub_staff_id'][$no] = $aryData['sub_staff_id'];
+			}
+		}
+
+	}
+
+	function setHisViewData()
+	{
+		// ヘッダ用の基本情報
+		$aryTmp = $this->oMgr->getUserBaseData($this->request['user_id']);
+
+		$aryTmp['sex'] = (string)$aryTmp['sex'];
+		if ($aryTmp['sex'] != "")
+		{
+			$aryTmp['sex_name'] = $this->oMgr->getValue('sex', $aryTmp['sex']);
+		}
+		else
+		{
+			$aryTmp['sex_name'] = "※未登録";
+		}
+		if ($aryTmp['birthday'] != "")
+		{
+			$aryTmp['birthday_text'] = $aryTmp['birth_year'] . " 年 " . $aryTmp['birth_mon'] . " 月 " . $aryTmp['birth_day'] . " 日";
+		}
+		else
+		{
+			$aryTmp['birthday_text'] = "※未登録";
+		}
+
+		if ($aryTmp['pbno'] == "")
+		{
+			$aryTmp['pbno'] = "※未登録";
+		}
+
+		$this->setOutputData($aryTmp);
+
+		// HIS情報取得
+		$aryListNo = $this->oMgr->getHisListNo($this->request['user_id']);
+
+		$this->is_main_data = false;
+
+		$max_no = "";
+		if (is_array($aryListNo))
+		{
+			$max_no = array_pop($aryListNo);
+		}
+
+		if ($max_no == "")
+		{
+			// 1件も登録がない場合
+			$this->request['list_no'] = "nodata";
+		}
+		else
+		{
+			if ($this->request['list_no'] == "")
+			{
+				// 通常はメインを指定
+				$this->request['list_no'] = "0";
+			}
+
+			if ($this->request['list_no'] == "0")
+			{
+				$this->is_main_data = true;
+			}
+
+
+			$this->reserve_data_only = false;
+
+			if ($this->request['edit_mode'] == 'history')
+			{
+				// 履歴の場合
+				$aryTmp = $this->oMgr->getUserHisHistoryData($this->request['user_id'], @$this->request['list_no'], $this->request['history_no']);
+
+				$aryTmp['password'] = "";
+
+				$this->setOutputData($aryTmp);
+
+				$this->output['edit_mode_name'] = "履歴情報";
+			}
+			else if ($this->request['edit_mode'] != "")
+			{
+				if ($this->request['edit_mode'] == 'reserve')
+				{
+					$reserve_flg = true;
+
+					$this->output['edit_mode_name'] = "予約データ";
+					$this->request['immediate_flg'] = "2";
+				}
+
+				$aryTmp = $this->oMgr->getUserHisData($this->request['user_id'], @$this->request['list_no'], $reserve_flg);
+
+				$aryTmp['password'] = "";
+
+				$this->setOutputData($aryTmp);
+			}
+			else
+			{
+				$aryTmp = $this->oMgr->getUserHisData($this->request['user_id'], @$this->request['list_no']);
+
+				$aryTmp['password'] = "";
+
+				$this->setOutputData($aryTmp);
+
+				if ($aryTmp['staffcode'] == "")
+				{
+					// データがない場合
+					$this->reserve_data_only = true;
+				}
+
+				// 予約データを取得
+				$aryTmp = $this->oMgr->getUserHisData($this->request['user_id'], @$this->request['list_no'], true);
+
+				if ($aryTmp['staffcode'] != "")
+				{
+					$this->has_reserve_data = true;
+					$this->output['reserve_send_date'] = $aryTmp['send_date'];
+					$this->output['reserve_user_name'] = $this->oMgr->getUserName($aryTmp['update_id']);
+				}
+				else if ($this->reserve_data_only)
+				{
+					// 本データも予約データもない場合
+					$this->request['list_no'] = "";
+					self::setViewData();
+				}
+
+				// 履歴作成
+				$this->setHisHistoryData();
+			}
+
+			// コード類を名称に
+			$this->setHisCodesToName();
+		}
+
+		if ($this->output['his_history_kbn'] != "")
+		{
+			$this->output['his_history_kbn_name'] = $this->oMgr->getValue('his_history_kbn', $this->output['his_history_kbn']);
+		}
+
+		// 予約の場合
+		$this->has_original_data = true;
+		if ($this->request['edit_mode'] == "reserve")
+		{
+			$aryTmp = $this->oMgr->getUserHisData($this->request['user_id'], @$this->request['list_no']);
+
+			if ($aryTmp['staffcode'] == "")
+			{
+				$this->has_original_data = false;
+			}
+		}
+
+		// 退職の場合
+		if ($this->output['validenddate'] != "")
+		{
+			$this->output['is_retire_date'] = $this->checkRetireDate($this->output['validenddate']);
+		}
+	}
+
+	function setHisCodesToName()
+	{
+
+		$aryWard = $this->oMgr->getWardAry($this->output['wardstatus']);
+		$aryProfession = $this->oMgr->getProfessionAry($this->output['professionstatus']);
+		$aryGrade = $this->oMgr->getGradeAry();
+		$aryDept = $this->oMgr->getDeptAry($this->output['deptstatus']);
+
+		$this->output['wardname'] = $this->oMgr->getValue('wardstatus', $this->output['wardstatus']) . "　" . $aryWard[$this->output['wardcode']];
+		$this->output['professionname'] = $this->oMgr->getValue('professionstatus', $this->output['professionstatus']) . "　" . $aryProfession[$this->output['professioncode']];
+		$this->output['gradename'] = $aryGrade[$this->output['gradecode']];
+		$this->output['deptname'] = $this->oMgr->getValue('deptstatus', $this->output['deptstatus']) . "　" . $aryDept[$this->output['deptcode']];
+		if ($this->output['deptgroupcode'] != "")
+		{
+			$aryDeptgroup = $this->oMgr->getDeptgroupAry($this->output['deptcode']);
+
+			$this->output['deptname'] .= "　" . $aryDeptgroup[$this->output['deptgroupcode']];
+		}
+
+	}
+
+	function setHisHistoryData()
+	{
+
+		// 履歴データを取得
+		$aryHistory = $this->oMgr->getHisHistoryList($this->request['user_id'], @$this->request['list_no']);
+
+		if (is_array($aryHistory))
+		{
+			foreach ($aryHistory AS $history_no => $aryData)
+			{
+				if ($history_no == "0")
+				{
+					continue;
+				}
+
+
+				$aryData['user_name'] = $this->oMgr->getUserName($aryData['history_user_id']);
+
+				$aryData['mode_name'] = $this->oMgr->getValue('his_history_kbn', $aryData['his_history_kbn']);
+
+				//print_r($aryData);
+
+				// メインデータと同じ名称になるのを避けるためキーに文字列を付加
+				foreach ($aryData AS $key => $val)
+				{
+					$aryListVal["history_".$key] = $val;
+				}
+				$aryListVal['history_no'] = $history_no;
+
+				$this->setOutputData($aryListVal, $history_no);
+			}
+		}
+
+	}
+
+
+	function setCardViewData()
+	{
+		// 共通ヘッダの情報作成
+		$this->setCommonHeaderData();
+
+		// カード情報取得
+		$aryTmp = $this->oMgr->getUserCardData($this->request['user_id']);
+
+		$card_cnt = 0;
+		if (is_array($aryTmp))
+		{
+			foreach ($aryTmp AS $no => $aryData)
+			{
+				$aryData['card_no'] = sprintf("%08d%02d", $aryData['ident_code'], $aryData['issue_cnt']);
+
+				$this->setOutputData($aryData, $no);
+				$card_cnt++;
+			}
+		}
+
+	}
+
+	function setCardViewData_kyoto()
+	{
+		// 共通ヘッダの情報作成
+		$this->setCommonHeaderData();
+
+		// カード情報取得
+		$aryListNo = $this->oMgr->getKyotoCardListNo($this->request['user_id']);
+
+		$this->is_main_data = false;
+
+		$max_no = "";
+		if (is_array($aryListNo))
+		{
+			$max_no = array_pop($aryListNo);
+		}
+
+		if ($max_no == "")
+		{
+			// 1件も登録がない場合
+			$this->request['list_no'] = "nodata";
+		}
+		else
+		{
+			if ($this->request['list_no'] == "")
+			{
+				// 通常はメインを指定
+				$this->request['list_no'] = "0";
+			}
+
+			if ($this->request['list_no'] == "0")
+			{
+				$this->is_main_data = true;
+			}
+
+			$aryTmp = $this->oMgr->getKyotoCardData($this->request['user_id'], $this->request['list_no']);
+
+			// チェックボックス、ラジオボタンはRequestに
+			$this->request['card_type'] = $aryTmp['card_type'];
+			for ($i = 1 ; $i <= 25 ; $i++)
+			{
+				$col = "permission_" . $i;
+				$this->request[$col] = $aryTmp[$col];
+			}
+			$this->request['reissue_flg'] = $aryTmp['reissue_flg'];
+			$this->request['suspend_flg'] = $aryTmp['suspend_flg'];
+			$this->request['del_flg'] = $aryTmp['del_flg'];
+
+			// テキストデータはOutputに
+			for ($i = 1 ; $i <= 4 ; $i++)
+			{
+				$col = "belong_info_" . $i;
+				$this->output[$col] = $aryTmp[$col];
+			}
+			$this->output['key_number'] = $aryTmp['key_number'];
+			$this->output['uid'] = $aryTmp['uid'];
+			$this->output['start_date'] = $aryTmp['start_date'];
+			$this->output['end_date'] = $aryTmp['end_date'];
+
+		}
+
+	}
+
+	function setIDPrintData()
+	{
+		$user_id = $_SESSION['print_user_id'];
+		$list_no = $_SESSION['print_list_no'];
+
+		// HIS連携データ
+		$aryTmp = $this->oMgr->getJunHisData($user_id, $list_no);
+
+		$this->setRequestData($aryTmp);
+
+		$this->output['print_cnt'] = 1;
+	}
+
+	/*======================================================
+	 * Name         : checkInputdata
+	* IN           :
+	* OUT          : [true]エラーなし [false]エラーあり
+	* Discription  : 会員情報入力値をチェックする
+	=======================================================*/
+	function checkInputdata()
+	{
+		$user_id = @$this->request['user_id'];
+
+		switch ($this->request['ctrl_mode_name'])
+		{
+			case 'base':
+
+				// 個人番号
+				if (!$this->oMgr->checkEmpty($this->request['staff_id']))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->setErr('E001',"個人番号");
+				}
+//				else if (!string::checkNumber($this->request['staff_id'], STAFF_ID_LEN))
+				else if (!string::strlen($this->request['staff_id']) > STAFF_ID_LEN)
+				{
+					// エラーメッセージをセット
+					$param = array();
+					$param[0] = "個人番号";
+					$param[1] = "半角".STAFF_ID_LEN."桁";
+					$this->oMgr->setErr('E004', $param);
+				}
+				else if ($this->oMgr->existsStaffId($this->request['staff_id'], $user_id))
+				{
+					$this->oMgr->setErr('E017',"個人番号");
+				}
+
+				// 漢字姓
+				if (!$this->oMgr->checkEmpty($this->request['kanjisei']))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->setErr('E001',"氏名(姓)");
+				}
+				// 漢字名
+				if (!$this->oMgr->checkEmpty($this->request['kanjimei']))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->setErr('E001',"氏名(名)");
+				}
+
+				// カナ姓
+				$this->request['kanasei'] = string::han2zen($this->request['kanasei']);
+				if (!$this->oMgr->checkEmpty($this->request['kanasei']))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->setErr('E001',"氏名カナ(姓)");
+				}
+				else if (!string::chackKatakana3($this->request['kanasei']))
+				{
+					// エラーメッセージをセット
+					$param = array();
+					$param[0] = '氏名カナ(姓)';
+					$param[1] = 'カタカナ';
+					$this->oMgr->setErr('E004', $param);
+				}
+
+				// カナ名
+				$this->request['kanamei'] = string::han2zen($this->request['kanamei']);
+				if (!$this->oMgr->checkEmpty($this->request['kanamei']))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->setErr('E001',"氏名カナ(名)");
+				}
+				else if (!string::chackKatakana3($this->request['kanamei']))
+				{
+					// エラーメッセージをセット
+					$param = array();
+					$param[0] = '氏名カナ(名)';
+					$param[1] = 'カタカナ';
+					$this->oMgr->setErr('E004', $param);
+				}
+
+				// 英字姓
+				$this->request['eijisei'] = string::zen2han($this->request['eijisei']);
+				$this->request['eijisei'] = strtolower($this->request['eijisei']);
+				$chkEijisei = str_replace("-", "", $this->request['eijisei']);
+				if (!$this->oMgr->checkEmpty($this->request['eijisei']))
+				{
+					// 任意
+				}
+				else if (!string::checkAlphabet($chkEijisei))
+				{
+					// エラーメッセージをセット
+					$param = array();
+					$param[0] = '氏名英字(姓)';
+					$param[1] = '半角英字';
+					$this->oMgr->setErr('E004', $param);
+				}
+
+				// 英字名
+				$this->request['eijimei'] = string::zen2han($this->request['eijimei']);
+				$this->request['eijimei'] = strtolower($this->request['eijimei']);
+				$chkEijimei = str_replace("-", "", $this->request['eijimei']);
+				if (!$this->oMgr->checkEmpty($this->request['eijimei']))
+				{
+					// 任意
+				}
+				else if (!string::checkAlphabet($chkEijimei))
+				{
+					// エラーメッセージをセット
+					$param = array();
+					$param[0] = '氏名英字(名)';
+					$param[1] = '半角英字';
+					$this->oMgr->setErr('E004', $param);
+				}
+
+				// 戸籍氏名カナ姓
+				$this->request['kanasei_real'] = string::han2zen($this->request['kanasei_real']);
+				if (!$this->oMgr->checkEmpty($this->request['kanasei_real']))
+				{
+					// エラーメッセージをセット
+					//$this->oMgr->setErr('E001',"戸籍氏名カナ(姓)");
+				}
+				else if (!string::chackKatakana3($this->request['kanasei_real']))
+				{
+					// エラーメッセージをセット
+					$param = array();
+					$param[0] = '戸籍氏名カナ(姓)';
+					$param[1] = 'カタカナ';
+					$this->oMgr->setErr('E004', $param);
+				}
+
+				// 戸籍氏名カナ名
+				$this->request['kanamei_real'] = string::han2zen($this->request['kanamei_real']);
+				if (!$this->oMgr->checkEmpty($this->request['kanamei_real']))
+				{
+					// エラーメッセージをセット
+					//$this->oMgr->setErr('E001',"戸籍氏名カナ(名)");
+				}
+				else if (!string::chackKatakana3($this->request['kanamei_real']))
+				{
+					// エラーメッセージをセット
+					$param = array();
+					$param[0] = '戸籍氏名カナ(名)';
+					$param[1] = 'カタカナ';
+					$this->oMgr->setErr('E004', $param);
+				}
+
+				// 性別
+				$this->request['sex'] = (string)$this->request['sex'];
+				if (!$this->oMgr->checkEmpty($this->request['sex']))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->setErr('E007',"性別");
+				}
+
+				// 生年月日
+				if (!$this->oMgr->checkEmpty($this->request['birth_year']))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->setErr('E007',"生年月日(年)");
+				}
+				if (!$this->oMgr->checkEmpty($this->request['birth_mon']))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->setErr('E007',"生年月日(月)");
+				}
+				if (!$this->oMgr->checkEmpty($this->request['birth_day']))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->setErr('E007',"生年月日(日)");
+				}
+				else if(!checkdate($this->request['birth_mon'], $this->request['birth_day'], $this->request['birth_year']))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->setErr('E013',"生年月日");
+				}
+
+				// 所属
+				if (!$this->oMgr->checkEmpty($this->request['belong_chg_id']))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->setErr('E007',"所属");
+				}
+
+				// 職種
+				if (!$this->oMgr->checkEmpty($this->request['job_id']))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->setErr('E007',"職種");
+				}
+
+				// 役職
+				if (!$this->oMgr->checkEmpty($this->request['post_id']))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->setErr('E007',"役職");
+				}
+
+				// 常勤／非常勤
+				if (!$this->oMgr->checkEmpty($this->request['joukin_kbn']))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->setErr('E007',"常勤／非常勤");
+				}
+
+				// PHS番号
+				$this->request['pbno'] = string::zen2han($this->request['pbno']);
+				if (!$this->oMgr->checkEmpty($this->request['pbno']))
+				{
+					// 任意
+				}
+				else if (!string::checkNumber($this->request['pbno'], 4))
+				{
+					// エラーメッセージをセット
+					$param = array();
+					$param[0] = "PHS番号";
+					$param[1] = "半角数字4桁";
+					$this->oMgr->setErr('E004', $param);
+				}
+
+				// 内線
+				$this->request['naisen'] = string::zen2han($this->request['naisen']);
+				if (!$this->oMgr->checkEmpty($this->request['naisen']))
+				{
+					// 任意
+				}
+				else if (!string::strlen($this->request['naisen']) > 20)
+				{
+					// エラーメッセージをセット
+					$param = array();
+					$param[0] = "内線";
+					$param[1] = "20桁以内";
+					$this->oMgr->setErr('E004', $param);
+				}
+
+				// 送信日
+				if ($this->request['reserve_flg'] == "1")
+				{
+					if (!$this->oMgr->checkEmpty($this->request['reflect_date']))
+					{
+						// エラーメッセージをセット
+						$this->oMgr->setErr('E001',"反映日");
+					}
+					else if (!$this->oMgr->checkDateFormat($this->request['reflect_date']))
+					{
+						// エラーメッセージをセット
+						$param = array();
+						$param[0] = "反映日";
+						$param[1] = "yyyy/mm/dd";
+						$this->oMgr->setErr('E004', $param);
+					}
+					else if (!$this->oMgr->checkDate($this->request['reflect_date']))
+					{
+						// エラーメッセージをセット
+						$this->oMgr->setErr('E013',"反映日");
+					}
+					else
+					{
+						list ($reflect_y, $reflect_m, $reflect_d) = explode("/", $this->request['reflect_date']);
+						$reflect_date = sprintf("%04d-%02d-%02d", $reflect_y, $reflect_m, $reflect_d);
+
+						// 即時反映の日付がセットされた場合
+						if (strtotime(date('Y-m-d')) >= strtotime($reflect_date))
+						{
+							if ($this->request['edit_mode'] == 'reserve')
+							{
+								$this->oMgr->pushError("即時反映する場合は予約取消後に通常の編集を行ってください。");
+							}
+							else
+							{
+								$this->oMgr->pushError("反映日には未来の日付を入力してください。");
+							}
+						}
+
+					}
+				}
+
+
+				break;
+			case 'ncvc':
+				$aryOld = $this->oMgr->getUserNcvcData($user_id);
+				$old_login_id = $aryOld['login_id'];
+				$old_login_pw = $aryOld['login_passwd'];
+				$old_mail_acc = $aryOld['mail_acc'];
+				unset($aryOld);
+
+				// 英字姓
+				$this->request['eijisei'] = string::zen2han($this->request['eijisei']);
+				$this->request['eijisei'] = strtolower($this->request['eijisei']);
+				$chkEijisei = str_replace("-", "", $this->request['eijisei']);
+				if (!$this->oMgr->checkEmpty($this->request['eijisei']))
+				{
+					// 任意
+				}
+				else if (!string::checkAlphabet($chkEijisei))
+				{
+					// エラーメッセージをセット
+					$param = array();
+					$param[0] = '氏名英字(姓)';
+					$param[1] = '半角英字';
+					$this->oMgr->setErr('E004', $param);
+				}
+
+				// 英字名
+				$this->request['eijimei'] = string::zen2han($this->request['eijimei']);
+				$this->request['eijimei'] = strtolower($this->request['eijimei']);
+				$chkEijimei = str_replace("-", "", $this->request['eijimei']);
+				if (!$this->oMgr->checkEmpty($this->request['eijimei']))
+				{
+					// 任意
+				}
+				else if (!string::checkAlphabet($chkEijimei))
+				{
+					// エラーメッセージをセット
+					$param = array();
+					$param[0] = '氏名英字(名)';
+					$param[1] = '半角英字';
+					$this->oMgr->setErr('E004', $param);
+				}
+
+				// 統合ID
+				$this->request['login_id'] = string::zen2han($this->request['login_id']);
+//				$this->request['login_id'] = strtolower($this->request['login_id']);
+				// 元データと変わってない場合チェックしない
+				if ($old_login_id == $this->request['login_id'])
+				{
+
+				}
+				else if (!$this->oMgr->checkEmpty($this->request['login_id']))
+				{
+					// 任意
+					if ($this->request['mail_acc'] != "")
+					{
+						$this->oMgr->setErr('E001',"統合ID");
+					}
+				}
+				else if (string::strlen($this->request['login_id']) > 20)
+				{
+					// エラーメッセージをセット
+					$param = array();
+					$param[0] = '統合ID';
+					$param[1] = '20文字以内';
+					$this->oMgr->setErr('E004', $param);
+				}
+				else if (!ereg("^[a-z]+\.[a-z]+\.[a-z]{2}$", $this->request['login_id']))
+				{
+					// エラーメッセージをセット
+//					$param = array();
+//					$param[0] = '統合ID';
+//					$param[1] = '姓．名．規定の英字2文字';
+//					$this->oMgr->setErr('E004', $param);
+				}
+				else if ($this->oMgr->existsMailAcc($this->request['login_id']))
+				{
+					// メールアカウントとして使用中
+					$this->oMgr->setErr('E017',"統合ID");
+				}
+				else if ($this->oMgr->existsMlistAcc($this->request['login_id']))
+				{
+					// メーリングリストとして使用中
+					$this->oMgr->setErr('E017',"統合ID");
+				}
+				else if ($this->oMgr->existsOldMail($this->request['login_id']))
+				{
+					// エイリアスのアカウントとして使用中
+					$this->oMgr->setErr('E017',"統合ID");
+				}
+				else
+				{
+					list($sei, $mei, $rand) = explode(".", $this->request['login_id']);
+
+					$aryRandStr = $this->oMgr->getAry('rand_tow_chars');
+
+					if (!in_array($rand, $aryRandStr))
+					{
+						// エラーメッセージをセット
+//						$param = array();
+//						$param[0] = '統合ID';
+//						$param[1] = '姓．名．規定の英字2文字';
+//						$this->oMgr->setErr('E004', $param);
+					}
+					else if ($this->oMgr->existsLoginId($this->request['login_id'], $user_id))
+					{
+						$this->oMgr->setErr('E017',"統合ID");
+					}
+				}
+
+
+				// パスワード
+				$this->request['login_passwd'] = string::zen2han($this->request['login_passwd']);
+				if (!$this->oMgr->checkEmpty($this->request['login_passwd']))
+				{
+					// 任意
+					// 未登録の場合、統合IDが入力されていれば必須
+					if ($this->request['login_id'] != "" && $old_login_pw == "")
+					{
+//						$this->oMgr->setErr('E001',"パスワード");
+					}
+				}
+				else
+				{
+					$passwd = $this->request['login_passwd'];
+					if (!string::checkAlphanumWide($passwd, 6, 20) || !ereg("[0-9]", $passwd) || !ereg("[a-z]", $passwd) || !ereg("[A-Z]", $passwd))
+					{
+						$param = array();
+						$param[0] = "パスワード";
+						$param[1] = "数字、英字大文字、英字小文字を各１文字以上使用し、6～20文字";
+
+						// エラーメッセージをセット
+						$this->oMgr->setErr('E004', $param);
+					}
+				}
+
+				$mailMsg = "";
+				// メールアカウント
+				// 元データと変わってない場合チェックしない
+				if ($old_mail_acc == $this->request['mail_acc'])
+				{
+
+				}
+				else if (!$this->oMgr->checkEmpty($this->request['mail_acc']))
+				{
+					//
+				}
+				else if (!$this->oMgr->checkNcvcMailAcc($this->request['mail_acc'], "メールアカウント", &$mailMsg))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->pushError($mailMsg);
+				}
+				else if ($this->oMgr->existsMailAcc($this->request['mail_acc'], $user_id))
+				{
+					$this->oMgr->setErr('E017',"メールアカウント");;
+				}
+				else if ($this->oMgr->existsMlistAcc($this->request['mail_acc']))
+				{
+					// メーリングリストとして使用中
+					$this->oMgr->setErr('E017',"メールアカウント");
+				}
+				else if ($this->oMgr->existsOldMail($this->request['mail_acc']))
+				{
+					// エイリアスのアカウントとして使用中
+					$this->oMgr->setErr('E017',"メールアカウント");
+				}
+				else if ($this->oMgr->existsLoginId($this->request['mail_acc']))
+				{
+					if ($this->request['mail_acc'] == $this->request['login_id'])
+					{
+						$param = array();
+						$param[0] = "メールアカウント";
+						$param[1] = "統合ID以外の文字列";
+						$this->oMgr->setErr('E004',$param);
+					}
+					else
+					{
+						// 統合IDとして使用中
+						$this->oMgr->setErr('E017',"メールアカウント");
+					}
+				}
+				else if ($this->request['mail_acc'] == $this->request['login_id'])
+				{
+					$param = array();
+					$param[0] = "メールアカウント";
+					$param[1] = "統合ID以外の文字列";
+					$this->oMgr->setErr('E004',$param);
+				}
+
+				// ファイル転送
+				if (!$this->oMgr->checkEmpty($this->request['ftrans_user_kbn']))
+				{
+					if ($this->request['ftrans_user_flg'] == '1')
+					{
+						// エラーメッセージをセット
+						$this->oMgr->setErr('E007',"ファイル転送機能利用の権限");
+					}
+				}
+
+				$has_date_err = false;
+
+				// 利用期間
+				if (!$this->oMgr->checkEmpty($this->request['start_date']))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->setErr('E001',"利用期間(開始日)");
+					$has_date_err = true;
+				}
+				else if (!$this->oMgr->checkDateFormat($this->request['start_date']))
+				{
+					// エラーメッセージをセット
+					$param = array();
+					$param[0] = "利用期間(開始日)";
+					$param[1] = "yyyy/mm/dd";
+					$this->oMgr->setErr('E004', $param);
+					$has_date_err = true;
+				}
+				else if (!$this->oMgr->checkDate($this->request['start_date']))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->setErr('E013',"利用期間(開始日)");
+					$has_date_err = true;
+				}
+
+				// 利用期間
+				if (!$this->oMgr->checkEmpty($this->request['end_date']))
+				{
+					// エラーメッセージをセット
+					//$this->oMgr->setErr('E001',"利用期間(終了日)");
+					$has_date_err = true;
+				}
+				else if (!$this->oMgr->checkDateFormat($this->request['end_date']))
+				{
+					// エラーメッセージをセット
+					$param = array();
+					$param[0] = "利用期間(終了日)";
+					$param[1] = "yyyy/mm/dd";
+					$this->oMgr->setErr('E004', $param);
+					$has_date_err = true;
+				}
+				else if (!$this->oMgr->checkDate($this->request['end_date']))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->setErr('E013',"利用期間(終了日)");
+					$has_date_err = true;
+				}
+
+				if (!$has_date_err)
+				{
+					if (!$this->oMgr->checkDateTerm($this->request['start_date'], $this->request['end_date']))
+					{
+						// エラーメッセージをセット
+						$param = array();
+						$param[0] = "利用期間(開始日)";
+						$param[1] = "利用期間(終了日)";
+						$this->oMgr->setErr('E012',$param);
+					}
+				}
+
+				// 送信日
+				if ($this->request['reserve_flg'] == "1")
+				{
+					if (!$this->oMgr->checkEmpty($this->request['reflect_date']))
+					{
+						// エラーメッセージをセット
+						$this->oMgr->setErr('E001',"反映日");
+					}
+					else if (!$this->oMgr->checkDateFormat($this->request['reflect_date']))
+					{
+						// エラーメッセージをセット
+						$param = array();
+						$param[0] = "反映日";
+						$param[1] = "yyyy/mm/dd";
+						$this->oMgr->setErr('E004', $param);
+					}
+					else if (!$this->oMgr->checkDate($this->request['reflect_date']))
+					{
+						// エラーメッセージをセット
+						$this->oMgr->setErr('E013',"反映日");
+					}
+					else
+					{
+						list ($reflect_y, $reflect_m, $reflect_d) = explode("/", $this->request['reflect_date']);
+						$reflect_date = sprintf("%04d-%02d-%02d", $reflect_y, $reflect_m, $reflect_d);
+
+						// 即時反映の日付がセットされた場合
+						if (strtotime(date('Y-m-d')) >= strtotime($reflect_date))
+						{
+							if ($this->request['edit_mode'] == 'reserve')
+							{
+								$this->oMgr->pushError("即時反映する場合は予約取消後に通常の編集を行ってください。");
+							}
+							else
+							{
+								$this->oMgr->pushError("反映日には未来の日付を入力してください。");
+							}
+						}
+
+					}
+				}
+
+
+
+				// エラーがあればヘッダ用の基本情報をとっておく
+				if (sizeof($this->oMgr->aryErrMsg) > 0)
+				{
+					$aryTmp = $this->oMgr->getUserBaseData($this->request['user_id']);
+					$this->setOutputData($aryTmp);
+				}
+
+
+
+				break;
+			case 'mail':
+				break;
+			case 'his':
+				// 送信日
+				if ($this->request['edit_mode'] == 'history')
+				{
+					// チェックしない
+					break;
+				}
+
+				$this->request['staffcode'] = string::zen2han($this->request['staffcode']);
+				$this->request['kananame'] = string::han2zen($this->request['kananame']);
+				$this->request['password'] = string::zen2han($this->request['password']);
+				$this->request['appcode'] = string::zen2han($this->request['appcode']);
+
+				if ($this->request['immediate_flg'] == "1")
+				{
+					// チェックしない
+				}
+				else if (!$this->oMgr->checkEmpty($this->request['send_date']))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->setErr('E001',"反映日");
+				}
+				else if (!$this->oMgr->checkDateFormat($this->request['send_date']))
+				{
+					// エラーメッセージをセット
+					$param = array();
+					$param[0] = "反映日";
+					$param[1] = "yyyy/mm/dd";
+					$this->oMgr->setErr('E004', $param);
+				}
+				else if (!$this->oMgr->checkDate($this->request['send_date']))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->setErr('E013',"反映日");
+				}
+				else
+				{
+					list ($send_y, $send_m, $send_d) = explode("/", $this->request['send_date']);
+					$send_date = sprintf("%04d-%02d-%02d", $send_y, $send_m, $send_d);
+
+					// 即時反映の日付がセットされた場合
+					if (strtotime(date('Y-m-d')) >= strtotime($send_date))
+					{
+						if ($this->request['edit_mode'] == 'reserve')
+						{
+							$this->oMgr->pushError("即時反映する場合は予約取消後に通常の編集を行ってください。");
+						}
+						else
+						{
+							$this->oMgr->pushError("反映日には未来の日付を入力してください。");
+						}
+					}
+				}
+
+				if ($this->request['edit_mode'] == "" || $this->request['edit_mode'] == 'reserve')
+				{
+					// ログインID
+					if (!$this->oMgr->checkEmpty($this->request['staffcode']))
+					{
+						$this->oMgr->setErr('E001',"ログインID");
+					}
+					else if (!string::checkNumber($this->request['staffcode'], 8))
+					{
+						// エラーメッセージをセット
+						$param = array();
+						$param[0] = "ログインID";
+						$param[1] = "半角数字8桁";
+						$this->oMgr->setErr('E004', $param);
+					}
+					else if ($this->oMgr->existsStaffcode($this->request['staffcode'], $this->request['user_id']))
+					{
+						$this->oMgr->setErr('E017',"ログインID");
+					}
+				}
+
+				// 漢字氏名
+				$rtn="";
+				if (!$this->oMgr->checkEmpty($this->request['kanjiname']))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->setErr('E001',"漢字氏名");
+				}
+				else if (!string::chkJIS3over($this->request['kanjiname'], &$rtn))
+				{
+					$param = array();
+					$param[0] = "漢字氏名";
+					$param[1] = $rtn;
+					$this->oMgr->setErr('E019', $param);
+				}
+
+				// カナ姓
+
+				$kananame = str_replace("　", "", $this->request['kananame']);
+				if (!$this->oMgr->checkEmpty($kananame))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->setErr('E001',"カナ氏名");
+				}
+				else if (!string::chackKatakana3($kananame))
+				{
+					// エラーメッセージをセット
+					$param = array();
+					$param[0] = 'カナ氏名';
+					$param[1] = 'カタカナ';
+					$this->oMgr->setErr('E004', $param);
+				}
+
+				// HISパスワード
+
+				if (!$this->oMgr->checkEmpty($this->request['password']))
+				{
+					// 任意
+				}
+				else
+				{
+					//if (!string::checkAlphanumWide($password, 6, 10) || !ereg("[0-9]", $password) || !ereg("[a-z]", $password) || !ereg("[A-Z]", $password))
+					if (!string::checkAlphanumWide($this->request['password'], 4, 10))
+					{
+						$param = array();
+						$param[0] = "HISパスワード";
+						$param[1] = "半角英数字4～10文字";
+
+						// エラーメッセージをセット
+						$this->oMgr->setErr('E004', $param);
+					}
+				}
+
+				// 部署
+				if (!$this->oMgr->checkEmpty($this->request['wardcode']))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->setErr('E007',"部署");
+				}
+
+				// 職種
+				if (!$this->oMgr->checkEmpty($this->request['professioncode']))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->setErr('E007',"職種");
+				}
+
+				// 役職
+				if (!$this->oMgr->checkEmpty($this->request['gradecode']))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->setErr('E007',"役職");
+				}
+
+				// 診療科
+				if (!$this->oMgr->checkEmpty($this->request['deptcode']))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->setErr('E007',"診療科");
+				}
+
+				// 予約項目コード
+				if (!$this->oMgr->checkEmpty($this->request['appcode']))
+				{
+					// 任意
+				}
+				else if (!string::checkAlphaNum($this->request['appcode'], 5))
+				{
+					// エラーメッセージをセット
+					$param = array();
+					$param[0] = "予約項目コード";
+					$param[1] = "半角英数字5桁";
+					$this->oMgr->setErr('E004', $param);
+				}
+
+				$has_validdate_err = false;
+
+				// 有効期間
+				if (!$this->oMgr->checkEmpty($this->request['validstartdate']))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->setErr('E001',"有効期間(開始日)");
+					$has_validdate_err = true;
+				}
+				else if (!$this->oMgr->checkDateFormat($this->request['validstartdate']))
+				{
+					// エラーメッセージをセット
+					$param = array();
+					$param[0] = "有効期間(開始日)";
+					$param[1] = "yyyy/mm/dd";
+					$this->oMgr->setErr('E004', $param);
+					$has_validdate_err = true;
+				}
+				else if (!$this->oMgr->checkDate($this->request['validstartdate']))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->setErr('E013',"有効期間(開始日)");
+					$has_validdate_err = true;
+				}
+
+				// 有効期間
+				if (!$this->oMgr->checkEmpty($this->request['validenddate']))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->setErr('E001',"有効期間(終了日)");
+					$has_validdate_err = true;
+				}
+				else if (!$this->oMgr->checkDateFormat($this->request['validenddate']))
+				{
+					// エラーメッセージをセット
+					$param = array();
+					$param[0] = "有効期間(終了日)";
+					$param[1] = "yyyy/mm/dd";
+					$this->oMgr->setErr('E004', $param);
+					$has_validdate_err = true;
+				}
+				else if (!$this->oMgr->checkDate($this->request['validenddate']))
+				{
+					// エラーメッセージをセット
+					$this->oMgr->setErr('E013',"有効期間(終了日)");
+					$has_validdate_err = true;
+				}
+
+				if (!$has_validdate_err)
+				{
+					if (!$this->oMgr->checkDateTerm($this->request['validstartdate'], $this->request['validenddate']))
+					{
+						// エラーメッセージをセット
+						$param = array();
+						$param[0] = "有効期間(開始日)";
+						$param[1] = "有効期間(終了日)";
+						$this->oMgr->setErr('E012',$param);
+					}
+				}
+
+				// エラーがあればヘッダ用の基本情報をとっておく
+				if (sizeof($this->oMgr->aryErrMsg) > 0)
+				{
+					$this->setHisErrorPageData();
+				}
+
+				break;
+			case 'salary':
+				// パスワード
+				$this->request['salary_passwd'] = string::zen2han($this->request['salary_passwd']);
+				if (!$this->oMgr->checkEmpty($this->request['salary_passwd']))
+				{
+					$this->oMgr->setErr('E001',"パスワード");
+				}
+				else
+				{
+					$passwd = $this->request['salary_passwd'];
+					if (!string::checkAlphanumWide($passwd, 6, 20) || !ereg("[0-9a-zA-Z]", $passwd))
+					{
+						$param = array();
+						$param[0] = "パスワード";
+						$param[1] = "数字、英字大文字、英字小文字を使用し、6～20文字";
+
+						// エラーメッセージをセット
+						$this->oMgr->setErr('E004', $param);
+					}
+				}
+
+				// エラーがあればヘッダ用の基本情報をとっておく
+				if (sizeof($this->oMgr->aryErrMsg) > 0)
+				{
+					// 共通ヘッダの情報作成
+					$this->setCommonHeaderData();
+				}
+
+				break;
+			case 'card':
+				break;
+		}
+		/*
+
+
+
+		// HIS連携する場合
+		if ($this->request['his_flg'] == '1')
+		{
+			$this->request['staffcode'] = string::zen2han($this->request['staffcode']);
+			$this->request['kananame'] = string::han2zen($this->request['kananame']);
+			$this->request['password'] = string::zen2han($this->request['password']);
+			$this->request['appcode'] = string::zen2han($this->request['appcode']);
+			$this->checkHisData();
+		}
+
+		// 複数HIS連携データがある場合
+		if (is_array($this->request['sub_his_flg']))
+		{
+			foreach ($this->request['sub_his_flg'] AS $no => $val)
+			{
+				if ($val != "1")
+				{
+					continue;
+				}
+
+				$this->request['sub_staffcode'][$no] = string::zen2han($this->request['sub_staffcode'][$no]);
+				$this->request['sub_kananame'][$no] = string::han2zen($this->request['sub_kananame'][$no]);
+				$this->request['sub_password'][$no] = string::zen2han($this->request['sub_password'][$no]);
+				$this->request['sub_appcode'][$no] = string::zen2han($this->request['sub_appcode'][$no]);
+				$this->checkHisData($no);
+			}
+		}
+		*/
+
+		// エラーなし
+		if (sizeof($this->oMgr->aryErrMsg) == 0)
+		{
+			return true;
+		}
+
+		// エラー発生
+		$this->errMsg = $this->oMgr->getErrMsg();
+		return false;
+	}
+
+	function checkSendonAddr()
+	{
+		$user_id = $this->request['user_id'];
+		$sendon_addr = $this->request['sendon_addr'];
+
+		if (!$this->oMgr->checkEmpty($sendon_addr))
+		{
+			// エラーメッセージをセット
+			$this->oMgr->setErr('E001',"転送先アドレス");
+		}
+		else if (!string::checkMailAddr($sendon_addr))
+		{
+			// エラーメッセージをセット
+			$this->oMgr->setErr('E006',"転送先アドレス");
+		}
+// 		else if (ereg("[A-Z]", $sendon_addr))
+// 		{
+// 			// エラーメッセージをセット
+// 			$param = array();
+// 			$param[0] = "転送先アドレス";
+// 			$param[1] = "英字大文字";
+// 			$this->oMgr->setErr('E020', $param);
+// 		}
+		else if ($this->oMgr->existsSendonAddr($sendon_addr, $user_id))
+		{
+			// エラーメッセージをセット
+			$this->oMgr->setErr('E018',"転送先アドレス");
+		}
+
+		// エラーなし
+		if (sizeof($this->oMgr->aryErrMsg) == 0)
+		{
+			return true;
+		}
+
+		// エラー発生
+		$this->errMsg = $this->oMgr->getErrMsg();
+		return false;
+	}
+
+	function checkOldmailAddr()
+	{
+		$user_id = $this->request['user_id'];
+		$oldmail_addr = $this->request['oldmail_addr'];
+
+		if (!$this->oMgr->checkEmpty($oldmail_addr))
+		{
+			// エラーメッセージをセット
+			$this->oMgr->setErr('E001',"エイリアスアドレス");
+		}
+		else if (!string::checkMailAddr($oldmail_addr))
+		{
+			// エラーメッセージをセット
+			$this->oMgr->setErr('E006',"エイリアスアドレス");
+		}
+		else if (ereg("[A-Z]", $oldmail_addr))
+		{
+			// エラーメッセージをセット
+			$param = array();
+			$param[0] = "エイリアスアドレス";
+			$param[1] = "英字大文字";
+			$this->oMgr->setErr('E020', $param);
+		}
+		else if ($this->oMgr->existsOldmailAddr($oldmail_addr, $user_id))
+		{
+			// エラーメッセージをセット
+			$this->oMgr->setErr('E018',"エイリアスアドレス");
+		}
+
+		// エラーなし
+		if (sizeof($this->oMgr->aryErrMsg) == 0)
+		{
+			return true;
+		}
+
+		// エラー発生
+		$this->errMsg = $this->oMgr->getErrMsg();
+		return false;
+	}
+
+	function checkKyotoCardData()
+	{
+		// 所属情報１～４
+		for ($i = 1 ; $i <= 4 ; $i++)
+		{
+			$col = "belong_info_" . $i;
+			$nam = "所属情報" . string::han2zen($i);
+
+			// 半角に変換
+			$this->request[$col] = string::zen2han($this->request[$col]);
+
+			if (!$this->oMgr->checkEmpty($this->request[$col]))
+			{
+//				if ($i == 1)
+//				{
+//					$this->oMgr->setErr('E001', $nam);
+//				}
+			}
+			else if (!(string::checkNumber($this->request[$col], 8) || string::checkNumber($this->request[$col], 10)))
+			{
+				// エラーメッセージをセット
+				$param = array();
+				$param[0] = $nam;
+				$param[1] = '半角数字8桁か10桁';
+				$this->oMgr->setErr('E004', $param);
+			}
+		}
+
+		// キー番号
+		$this->request['key_number'] = string::zen2han($this->request['key_number']);
+		if (!$this->oMgr->checkEmpty($this->request['key_number']))
+		{
+			$this->oMgr->setErr('E001', "キー番号");
+		}
+		else if (!string::checkAlphanum($this->request['key_number']))
+		{
+			// エラーメッセージをセット
+			$param = array();
+			$param[0] = "キー番号";
+			$param[1] = '半角英数字';
+			$this->oMgr->setErr('E004', $param);
+		}
+
+		// UID
+		$this->request['uid'] = string::zen2han($this->request['uid']);
+		if (!$this->oMgr->checkEmpty($this->request['uid']))
+		{
+			$this->oMgr->setErr('E001', "UID");
+		}
+		else if (!string::checkAlphanum($this->request['uid']))
+		{
+			// エラーメッセージをセット
+			$param = array();
+			$param[0] = "UID";
+			$param[1] = '半角英数字';
+			$this->oMgr->setErr('E004', $param);
+		}
+
+		// 利用期間
+		if (!$this->oMgr->checkEmpty($this->request['start_date']))
+		{
+			// エラーメッセージをセット
+			$this->oMgr->setErr('E001',"利用期間(開始日)");
+			$has_date_err = true;
+		}
+		else if (!$this->oMgr->checkDateFormat($this->request['start_date']))
+		{
+			// エラーメッセージをセット
+			$param = array();
+			$param[0] = "利用期間(開始日)";
+			$param[1] = "yyyy/mm/dd";
+			$this->oMgr->setErr('E004', $param);
+			$has_date_err = true;
+		}
+		else if (!$this->oMgr->checkDate($this->request['start_date']))
+		{
+			// エラーメッセージをセット
+			$this->oMgr->setErr('E013',"利用期間(開始日)");
+			$has_date_err = true;
+		}
+
+		// 利用期間
+		if (!$this->oMgr->checkEmpty($this->request['end_date']))
+		{
+			// エラーメッセージをセット
+			$this->oMgr->setErr('E001',"利用期間(終了日)");
+			$has_date_err = true;
+		}
+		else if (!$this->oMgr->checkDateFormat($this->request['end_date']))
+		{
+			// エラーメッセージをセット
+			$param = array();
+			$param[0] = "利用期間(終了日)";
+			$param[1] = "yyyy/mm/dd";
+			$this->oMgr->setErr('E004', $param);
+			$has_date_err = true;
+		}
+		else if (!$this->oMgr->checkDate($this->request['end_date']))
+		{
+			// エラーメッセージをセット
+			$this->oMgr->setErr('E013',"利用期間(終了日)");
+			$has_date_err = true;
+		}
+
+		if (!$has_date_err)
+		{
+			if (!$this->oMgr->checkDateTerm($this->request['start_date'], $this->request['end_date']))
+			{
+				// エラーメッセージをセット
+				$param = array();
+				$param[0] = "利用期間(開始日)";
+				$param[1] = "利用期間(終了日)";
+				$this->oMgr->setErr('E012',$param);
+			}
+		}
+
+		// エラーなし
+		if (sizeof($this->oMgr->aryErrMsg) == 0)
+		{
+			return true;
+		}
+
+		// エラー発生
+		$this->errMsg = $this->oMgr->getErrMsg();
+		return false;
+	}
+
+	function postComplete($param=array())
+	{
+		$param['mode'] = 'input';
+		$param['user_id'] = $this->request['user_id'];
+		$param['ctrl_mode_name'] = $this->request['ctrl_mode_name'];
+		$param['disp_type_name'] = $this->request['disp_type_name'];
+		$param['complete'] = "1";
+		$this->oMgr->postTo('users_detail.php', $param);
+	}
+
+	function setHisErrorPageData()
+	{
+		$aryTmp = $this->oMgr->getUserBaseData($this->request['user_id']);
+
+		$aryTmp['sex'] = (string)$aryTmp['sex'];
+		if ($aryTmp['sex'] != "")
+		{
+			$aryTmp['sex_name'] = $this->oMgr->getValue('sex', $aryTmp['sex']);
+		}
+		else
+		{
+			$aryTmp['sex_name'] = "※未登録";
+		}
+		if ($aryTmp['birthday'] != "")
+		{
+			$aryTmp['birthday_text'] = $aryTmp['birth_year'] . " 年 " . $aryTmp['birth_mon'] . " 月 " . $aryTmp['birth_day'] . " 日";
+		}
+		else
+		{
+			$aryTmp['birthday_text'] = "※未登録";
+		}
+
+		if ($aryTmp['pbno'] == "")
+		{
+			$aryTmp['pbno'] = "※未登録";
+		}
+
+		$this->setOutputData($aryTmp);
+
+		if ($this->request['edit_mode'] != "")
+		{
+			$edit_mode = $this->request['edit_mode'];
+
+			if ($this->request['edit_mode'] == "reserve")
+			{
+				$this->output['edit_mode_name'] = "予約データ";
+				$this->request['immediate_flg'] = "2";
+			}
+			else if ($this->request['edit_mode'] == "history")
+			{
+				$this->output['edit_mode_name'] = "履歴情報";
+			}
+
+			if ($this->request['immediate_flg'] == "1")
+			{
+				$this->disabled['send_date'] = "disabled";
+				$this->request['send_date'] = "";
+			}
+
+		}
+	}
+
+	function getUsersTabMenu()
+	{
+		return $this->oMgr->makeUsersTabMenu($this->request['ctrl_mode_name']);
+	}
+
+	function getHisTabMenu()
+	{
+		return $this->oMgr->makeHisTabMenu($this->request['user_id'], $this->request['list_no'], $this->request['disp_type_name']);
+	}
+
+
+	function getCardTabMenu()
+	{
+		return $this->oMgr->makeCardTabMenu($this->request['user_id'], $this->request['list_no'], $this->request['disp_type_name']);
+	}
+
+}
+
+?>

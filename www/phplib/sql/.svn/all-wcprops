@@ -1,0 +1,101 @@
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/RiyoushaKanri/!svn/ver/49/ncvcumgr/src/phplib/sql
+END
+mypage_sql.inc.php
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/RiyoushaKanri/!svn/ver/32/ncvcumgr/src/phplib/sql/mypage_sql.inc.php
+END
+users_regist_common_sql.inc.php
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/RiyoushaKanri/!svn/ver/49/ncvcumgr/src/phplib/sql/users_regist_common_sql.inc.php
+END
+mlists_regist_common_sql.inc.php
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/RiyoushaKanri/!svn/ver/49/ncvcumgr/src/phplib/sql/mlists_regist_common_sql.inc.php
+END
+menu_sql.inc.php
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/RiyoushaKanri/!svn/ver/28/ncvcumgr/src/phplib/sql/menu_sql.inc.php
+END
+users_search_sql.inc.php
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/RiyoushaKanri/!svn/ver/49/ncvcumgr/src/phplib/sql/users_search_sql.inc.php
+END
+mlists_search_sql.inc.php
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/RiyoushaKanri/!svn/ver/49/ncvcumgr/src/phplib/sql/mlists_search_sql.inc.php
+END
+ajax_sql.inc.php
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/RiyoushaKanri/!svn/ver/36/ncvcumgr/src/phplib/sql/ajax_sql.inc.php
+END
+users_edit_sql.inc.php
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/RiyoushaKanri/!svn/ver/49/ncvcumgr/src/phplib/sql/users_edit_sql.inc.php
+END
+mlists_edit_sql.inc.php
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/RiyoushaKanri/!svn/ver/49/ncvcumgr/src/phplib/sql/mlists_edit_sql.inc.php
+END
+mlists_members_sql.inc.php
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/RiyoushaKanri/!svn/ver/49/ncvcumgr/src/phplib/sql/mlists_members_sql.inc.php
+END
+init_mail_sql.inc.php
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/RiyoushaKanri/!svn/ver/28/ncvcumgr/src/phplib/sql/init_mail_sql.inc.php
+END
+users_add_sql.inc.php
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/RiyoushaKanri/!svn/ver/49/ncvcumgr/src/phplib/sql/users_add_sql.inc.php
+END
+mlists_add_sql.inc.php
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/RiyoushaKanri/!svn/ver/49/ncvcumgr/src/phplib/sql/mlists_add_sql.inc.php
+END
+common_sql.inc.php
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/RiyoushaKanri/!svn/ver/46/ncvcumgr/src/phplib/sql/common_sql.inc.php
+END
+init_passwd_sql.inc.php
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/RiyoushaKanri/!svn/ver/28/ncvcumgr/src/phplib/sql/init_passwd_sql.inc.php
+END
+index_sql.inc.php
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/RiyoushaKanri/!svn/ver/49/ncvcumgr/src/phplib/sql/index_sql.inc.php
+END

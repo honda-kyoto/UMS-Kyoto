@@ -1,0 +1,69 @@
+<?php
+/**********************************************************
+* File         : common_sql.inc.php
+* Authors      : mie tsutsui
+* Date         : 2011.07.27
+* Last Update  : 2011.07.27
+* Copyright    :
+***********************************************************/
+
+$cmnSql = array();
+
+$cmnSql['GET_BELONG_CLASS_ARY'] = "SELECT belong_class_id, belong_class_name FROM belong_class_mst WHERE del_flg = '0' ORDER BY disp_num";
+
+$cmnSql['GET_BELONG_DIV_ARY_ALL'] = "SELECT belong_div_id, belong_div_name FROM belong_div_mst WHERE del_flg = '0' ORDER BY disp_num";
+$cmnSql['GET_BELONG_DIV_ARY'] = "SELECT belong_div_id, belong_div_name FROM belong_div_mst WHERE del_flg = '0' AND belong_class_id = {0} ORDER BY disp_num";
+
+$cmnSql['GET_BELONG_DEP_ARY_ALL'] = "SELECT belong_dep_id, belong_dep_name FROM belong_dep_mst WHERE del_flg = '0' ORDER BY disp_num";
+$cmnSql['GET_BELONG_DEP_ARY'] = "SELECT belong_dep_id, belong_dep_name FROM belong_dep_mst WHERE del_flg = '0' AND belong_div_id = {0} ORDER BY disp_num";
+
+$cmnSql['GET_BELONG_SEC_ARY_ALL'] = "SELECT belong_sec_id, belong_sec_name FROM belong_sec_mst WHERE del_flg = '0' ORDER BY disp_num";
+$cmnSql['GET_BELONG_SEC_ARY'] = "SELECT belong_sec_id, belong_sec_name FROM belong_sec_mst WHERE del_flg = '0' AND belong_dep_id = {0} ORDER BY disp_num";
+
+$cmnSql['GET_BELONG_CHG_ARY_ALL'] = "SELECT belong_chg_id, belong_chg_name FROM belong_chg_mst WHERE del_flg = '0' ORDER BY disp_num";
+$cmnSql['GET_BELONG_CHG_ARY'] = "SELECT belong_chg_id, belong_chg_name FROM belong_chg_mst WHERE del_flg = '0' AND belong_sec_id = {0} ORDER BY disp_num";
+
+$cmnSql['GET_JOB_ARY'] = "SELECT job_id, job_name FROM job_mst WHERE del_flg = '0' ORDER BY disp_num";
+$cmnSql['GET_POST_ARY'] = "SELECT post_id, post_name FROM post_mst WHERE del_flg = '0' ORDER BY disp_num";
+
+$cmnSql['GET_USER_TYPE_ARY'] = "SELECT user_type_id, user_type_name FROM user_type_mst ORDER BY disp_num";
+$cmnSql['GET_USER_ROLE_ARY'] = "SELECT user_role_id, user_role_name FROM user_role_mst ORDER BY disp_num";
+
+$cmnSql['GET_WARD_ARY_ALL'] = "SELECT wardcode,wardname FROM his_ward_mst ORDER BY wardstatus, wardseq";
+$cmnSql['GET_WARD_ARY'] = "SELECT wardcode,wardname FROM his_ward_mst WHERE wardstatus = {0} ORDER BY wardseq";
+
+$cmnSql['GET_PROFESSION_ARY_ALL'] = "SELECT professioncode,professionname FROM his_profession_mst ORDER BY professioncode";
+$cmnSql['GET_PROFESSION_ARY'] = "SELECT professioncode,professionname FROM his_profession_mst WHERE professionstatus = {0} ORDER BY professioncode";
+
+$cmnSql['GET_GRADE_ARY'] = "SELECT gradecode,gradename FROM his_grade_mst ORDER BY gradecode";
+
+$cmnSql['GET_DEPT_ARY_ALL'] = "SELECT deptcode,deptname FROM his_dept_mst ORDER BY deptseq";
+$cmnSql['GET_DEPT_ARY'] = "SELECT deptcode,deptname FROM his_dept_mst WHERE deptstatus = {0} ORDER BY deptseq";
+
+$cmnSql['GET_DEPTGROUP_ARY_ALL'] = "
+SELECT
+    DG.deptgroupcode,
+    DG.deptgroupname
+FROM
+    his_deptgroup_mst AS DG,
+    his_dept_mst AS DP
+WHERE
+    DG.deptcode = DP.deptcode
+ORDER BY
+    DP.deptseq,
+    DG.deptgroupseq
+";
+$cmnSql['GET_DEPTGROUP_ARY'] = "
+SELECT
+    deptgroupcode,
+    deptgroupname
+FROM
+    his_deptgroup_mst
+WHERE
+    deptcode = '{0}'
+ORDER BY
+    deptgroupseq
+";
+
+
+?>

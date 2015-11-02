@@ -1,0 +1,93 @@
+<?php
+/**********************************************************
+* File         : sql.inc.php
+* Authors      : mie tsutsui
+* Date         : 2013.01.10
+* Last Update  : 2013.01.10
+* Copyright    :
+***********************************************************/
+require_once("sql/common_sql.inc.php");
+
+$cmnSql['GETLIST'] = "
+SELECT
+    mail_addr,
+    member_name,
+    sender_flg,
+    recipient_flg
+FROM
+    mlist_members_list
+WHERE
+    mlist_id = {0} AND
+    del_flg='0'
+";
+
+$cmnSql['EXISTS_MAIL_ADDR'] = "SELECT mail_addr FROM mlist_members_list WHERE mlist_id = {0} AND mail_addr = '{1}' AND del_flg = '0'";
+
+$cmnSql['GET_SENDER_KBN'] = "
+SELECT
+    sender_kbn
+FROM
+    mlist_head_tbl
+WHERE
+    mlist_id = {0}
+";
+
+$cmnSql['EXISTS_MLIST_MEMBER'] = "
+SELECT
+    mail_addr
+FROM
+    mlist_members_list
+WHERE
+    mlist_id = {MLIST_ID} AND
+    mail_addr = {MAIL_ADDR}
+";
+
+$cmnSql['INSERT_MLIST_MEMBER'] = "
+INSERT INTO mlist_members_list (
+mlist_id,
+mail_addr,
+member_name,
+sender_flg,
+recipient_flg,
+make_id,
+update_id
+) VALUES (
+{MLIST_ID},
+{MAIL_ADDR},
+{MEMBER_NAME},
+{SENDER_FLG},
+{RECIPIENT_FLG},
+{MAKE_ID},
+{UPDATE_ID}
+)
+";
+
+$cmnSql['UPDATE_MLIST_MEMBER'] = "
+UPDATE
+    mlist_members_list
+SET
+    member_name = {MEMBER_NAME},
+    sender_flg = {SENDER_FLG},
+    recipient_flg = {RECIPIENT_FLG},
+    del_flg = '0',
+    update_time = now(),
+    update_id = {UPDATE_ID}
+WHERE
+    mlist_id = {MLIST_ID} AND
+    mail_addr = {MAIL_ADDR}
+";
+
+
+$cmnSql['DELETE_MLIST_MEMBER'] = "
+UPDATE
+    mlist_members_list
+SET
+    del_flg = '1',
+    update_time = now(),
+    update_id = {UPDATE_ID}
+WHERE
+    mlist_id = {0} AND
+    mail_addr = '{1}'
+";
+
+?>

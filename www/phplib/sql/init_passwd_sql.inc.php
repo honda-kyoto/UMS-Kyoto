@@ -1,0 +1,25 @@
+<?php
+/**********************************************************
+* File         : sql.inc.php
+* Authors      : mie tsutsui
+* Date         : 2013.01.10
+* Last Update  : 2013.01.10
+* Copyright    :
+***********************************************************/
+require_once("sql/common_sql.inc.php");
+
+$cmnSql['SET_INIT_PASSWD'] = "
+UPDATE
+    user_mst
+SET
+    login_passwd = {LOGIN_PASSWD},
+    login_passwd_update_date = now()::date,
+    init_passwd_flg = '1',
+    update_time = now(),
+    update_id = {UPDATE_ID}
+WHERE
+    user_id = {0}
+";
+
+
+?>

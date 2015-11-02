@@ -1,0 +1,92 @@
+#発生源
+hasseigen.date=2014/09/01 00:00:00
+#病院　常勤
+byoin.jokin.filePath=Z:\\【病院】\\H26年度\\
+byoin.jokin.fileName=★常勤台帳★(H26.4.1～）
+byoin.jokin.file.extention=xls
+byoin.jokin.saiyo.sheetName=常勤　採用,常勤　その他,特定有期　採用,特定有期　その他
+byoin.jokin.saiyo.start.row=5
+byoin.jokin.jisyoku.sheetName=常勤　辞職,特定有期　辞職
+byoin.jokin.filePassword=jd2013
+byoin.jokin.output.filePath=C:\\Hasseigen\\
+byoin.jokin.output.fileName=hasseigen.csv
+byoin.jokin.jisyoku.output.filePath=C:\\Hasseigen\\
+byoin.jokin.jisyoku.output.fileName=hasseigen_jisyoku.csv
+
+#病院　非常勤
+byoin.hijokin.filePath=Z:\\【病院】\\H26年度\\
+byoin.hijokin.fileName=★非常勤台帳★(H26.4.1～）
+byoin.hijokin.file.extention=xls
+byoin.hijokin.saiyo.sheetName=非常勤　採用,非常勤　その他,医員・研修医 採用,医員・研修医 その他
+byoin.hijokin.saiyo.start.row=4
+byoin.hijokin.jisyoku.sheetName=非常勤　辞職,医員・研修医 辞職
+byoin.hijokin.filePassword=hd2013
+byoin.hijokin.output.filePath=C:\\Hasseigen\\
+byoin.hijokin.output.fileName=hasseigen.csv
+byoin.hijokin.jisyoku.output.filePath=C:\\Hasseigen\\
+byoin.hijokin.jisyoku.output.fileName=hasseigen_jisyoku.csv
+
+#医学　常勤
+igaku.jokin.filePath=Z:\\【医学】\\
+igaku.jokin.fileName=◆ 【常勤職員】　異動台帳H25.6.1～
+igaku.jokin.file.extention=xls
+igaku.jokin.saiyo.sheetName=基礎(採用),臨床(採用),特定有期(採用),事務(採用・配置換)(医学研究科),事務(採用・配置換) (共通事務部),事務(採用・配置換)(総務部人事課医学担当)
+igaku.jokin.saiyo.start.row=4
+igaku.jokin.jisyoku.sheetName=基礎(辞職・休職) ,臨床(辞職),特定有期(辞職),事務(辞職・配置換)(医学研究科),事務(辞職・配置換) (共通事務部),事務(辞職・配置換) (総務部人事課医学担当)
+igaku.jokin.filePassword=igaku1
+igaku.jokin.output.filePath=C:\\Hasseigen\\
+igaku.jokin.output.fileName=hasseigen.csv
+igaku.jokin.jisyoku.output.filePath=C:\\Hasseigen\\
+igaku.jokin.jisyoku.output.fileName=hasseigen_jisyoku.csv
+
+#医学　非常勤
+igaku.hijokin.filePath=Z:\\【医学】\\
+igaku.hijokin.fileName=◆ 【非常勤職員】　異動台帳(H26年度)
+igaku.hijokin.file.extention=xls
+igaku.hijokin.saiyo.sheetName=採用等
+igaku.hijokin.saiyo.start.row=4
+igaku.hijokin.jisyoku.sheetName=辞職
+igaku.hijokin.filePassword=igaku2
+igaku.hijokin.output.filePath=C:\\Hasseigen\\
+igaku.hijokin.output.fileName=hasseigen.csv
+igaku.hijokin.jisyoku.output.filePath=C:\\Hasseigen\\
+igaku.hijokin.jisyoku.output.fileName=hasseigen_jisyoku.csv
+
+#人間　常勤
+ningen.jokin.filePath=Z:\\【人間健康】\\
+ningen.jokin.fileName=★常勤台帳★
+ningen.jokin.file.extention=xls
+ningen.jokin.saiyo.sheetName=常勤・特定
+ningen.jokin.saiyo.start.row=21
+ningen.jokin.jisyoku.sheetName=常勤・特定
+ningen.jokin.filePassword=ningen01
+ningen.jokin.output.filePath=C:\\Hasseigen\\
+ningen.jokin.output.fileName=hasseigen.csv
+ningen.jokin.jisyoku.output.filePath=C:\\Hasseigen\\
+ningen.jokin.jisyoku.output.fileName=hasseigen_jisyoku.csv
+
+#人間　非常勤
+ningen.hijokin.filePath=Z:\\【人間健康】\\
+ningen.hijokin.fileName=★非常勤台帳★251002再作成　番号47以降　新・異動台帳　非常勤職員
+ningen.hijokin.file.extention=xls
+ningen.hijokin.saiyo.sheetName=Sheet1
+ningen.hijokin.saiyo.start.row=10
+ningen.hijokin.jisyoku.sheetName=Sheet1
+ningen.hijokin.filePassword=
+ningen.hijokin.output.filePath=C:\\Hasseigen\\
+ningen.hijokin.output.fileName=hasseigen.csv
+ningen.hijokin.jisyoku.output.filePath=C:\\Hasseigen\\
+ningen.hijokin.jisyoku.output.fileName=hasseigen_jisyoku.csv
+
+#一括取り込み
+ikkatsu.filePath=/var/www/phplib/hasseigen/
+ikkatsu.fileName=利用者管理利用申請書(一括申請）.xlsx
+ikkatsu.file.extention=xlsx
+ikkatsu.saiyo.sheetName=利用者統合管理システム登録申請書（一括申請）
+ikkatsu.saiyo.start.row=6
+ikkatsu.jisyoku.sheetName=
+ikkatsu.filePassword=
+ikkatsu.output.filePath=/var/www/phplib/hasseigen/
+ikkatsu.output.fileName=ikkatsu.csv
+ikkatsu.jisyoku.output.filePath=/var/www/phplib/hasseigen/
+ikkatsu.jisyoku.output.fileName=ikkatsu.csv

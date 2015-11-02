@@ -1,0 +1,564 @@
+@charset "UTF-8";
+/* CSS Document */
+
+html,
+body {
+	background: #FFF;
+	text-align: center;
+	font-family: Arial, 'Hiragino Kaku Gothic Pro', Meiryo, 'MS PGothic', 'ヒラギノ角ゴ Pro W3', 'メイリオ', 'ＭＳ Ｐゴシック', Osaka, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-webkit-text-size-adjust: none;
+}
+textarea {
+	resize: none;
+}
+img {
+	vertical-align: middle;
+}
+strong {
+	font-weight: bolder;
+}
+a {
+	color: #000066;
+	font-weight: bolder;
+}
+a:hover {
+	color: #08D;
+}
+.col01 {
+	color: #05A;
+}
+.fix {
+	overflow: hidden;
+}
+.fix:after { content: ""; display: block; clear: both; height: 0; overflow: hidden; width: 0; }
+/*\*/
+* html .fix { height: 0; overflow: visible; }
+/**/
+
+
+#mypageBox {
+  padding-left: 15px;
+}
+
+#usersBox {
+	padding-top: 10px;
+}
+
+#usersBox h3 {
+	  padding-left: 5px;
+}
+
+#header {
+	background: url(../image/header_bg.png) repeat-x center top;
+}
+#header .inner {
+	text-align: left;
+	width: 1000px;
+	margin: 0 auto;
+	padding: 19px 0;
+}
+#header .inner h1 {
+}
+
+#subHeader {
+	background: url(../image/header_shadow.png) no-repeat center top;
+}
+#subHeader .inner {
+	text-align: left;
+	width: 1000px;
+	margin: 0 auto;
+	padding: 20px 0 18px 0;
+}
+#subHeader .inner #loginUser {
+	color: #333;
+	font-size: 100%
+	line-height: 1.6;
+	margin: 5px 0 0 0;
+	float: left;
+}
+#subHeader .inner #subLink {
+	float: right;
+}
+#subHeader .inner #subLink li {
+	margin: 0 0 0 4px;
+	float: right;
+}
+
+#main {
+	background: url(../image/contents_top.png) no-repeat center top;
+	text-align: left;
+	width: 1000px;
+	margin: 0 auto;
+	padding: 30px 0 0 0;
+}
+#main .inner {
+	background: url(../image/contents_bg.png) repeat-y center top;
+	padding: 0 30px;
+}
+#main .inner h2.title {
+	background: url(../image/dot.gif) no-repeat center bottom;
+	color: #05A;
+	font-size: 182%;
+	font-weight: bolder;
+	margin: 0 0 10px 0;
+	padding: 0 0 12px 0;
+}
+#main .inner h3 {
+	color: #05A;
+	font-size: 100%;
+	font-weight: bolder;
+	margin: 0 0 5px 0;
+}
+
+#menuList {
+	width: 960px;
+	margin-left: -10px;
+}
+
+#menuList li .menuBtn span {
+  display: inline;
+}
+
+#menuList li {
+  float: left;
+  padding: 0 10px 20px 10px;
+}
+#menuList li.cr {
+	padding-right:  0;
+}
+
+a.menuBtn {
+	background: url(../image/menuList_bg.png) no-repeat left top;
+	text-decoration: none;
+	width: 172px;
+	height: 100px;
+	vertical-align: middle;
+	display: block;
+}
+
+a.menuBtn:hover {
+	background: url(../image/menuList_bg_on.png) no-repeat left top;
+}
+
+#menuList li .menuBtn div {
+	color: #FFF;
+	font-size: 112%;
+	font-weight: bold;
+	line-height: 1.4;
+	vertical-align: middle;
+	text-align:center;
+	display: table-cell;
+	width: 172px;
+	height: 100px;
+}
+#menuList li .menuBtn div span {
+	background: url(../image/ar_r.png) no-repeat left center;
+	padding: 0 0 0 17px;
+}
+
+* html #menuList li .menuBtn div {/* IE 6 */
+  display:inline;
+  zoom:1;
+}
+
+*:first-child+html #menuList li .menuBtn div {/* IE 7 */
+  display:inline;
+  zoom:1;
+}
+
+#main table td {
+		padding: 2px;
+
+}
+
+#main .inner .searchTab {
+	border-top: 1px solid #FFF;
+	border-left: 1px solid #FFF;
+	font-size: 100%
+	line-height: 1.6;
+	width: 100%;
+}
+#main .inner .searchTab th {
+	border-bottom: 1px solid #FFF;
+	border-right: 1px solid #FFF;
+	background: #4C5F6C;
+	color: #FFF;
+	font-weight: bolder;
+	padding: 5px 5px 3px 5px;
+}
+#main .inner .searchTab td {
+	border-bottom: 1px solid #FFF;
+	border-right: 1px solid #FFF;
+	background: #F3F3F3;
+	color: #333;
+	padding: 5px 5px 3px 5px;
+}
+#main .inner .searchTab td.emptycol {
+	border-bottom: 1px solid #FFF;
+	border-right: 1px solid #FFF;
+	background: #FFF;
+	color: #FFF;
+	padding: 5px 5px 3px 5px;
+}
+#main .inner .searchTab td td {
+	border-bottom: none;
+	border-right: none;
+	background: none;
+	padding: 0;
+}
+#main .inner .searchBlock {
+	text-align: center;
+	margin: 15px 0 0 0;
+}
+#main .inner .resultBlock {
+	background: url(../image/dot.gif) no-repeat center top;
+	margin: 25px 0 0 0;
+	padding: 26px 0 0 0;
+}
+#main .inner .listTabH {
+	font-size: 100%
+	line-height: 1.6;
+	width: 100%;
+	margin-bottom:5px;
+}
+#main .inner .listTabB {
+	font-size: 100%
+	line-height: 1.6;
+	width: 100%;
+	margin-top:5px;
+}
+#main .inner .listTab {
+	border-top: 1px solid #FFF;
+	border-left: 1px solid #FFF;
+	font-size: 100%
+	line-height: 1.6;
+	width: 100%;
+	margin: 2px;
+}
+#main .inner .listTab th {
+	border-bottom: 1px solid #FFF;
+	border-right: 1px solid #FFF;
+	background: #4C5F6C;
+	color: #FFF;
+	font-weight: bolder;
+	text-align: center;
+	padding: 5px 5px 3px 5px;
+}
+#main .inner .listTab td {
+	border-bottom: 1px solid #FFF;
+	border-right: 1px solid #FFF;
+	background: #F3F3F3;
+	color: #333;
+	padding: 5px 5px 3px 5px;
+}
+#main .inner .listTab td td {
+	border-bottom: none;
+	border-right: none;
+	background: none;
+	padding: 0;
+}
+
+#main .inner .listTabF {
+	border-top: 1px solid #FFF;
+	border-left: 1px solid #FFF;
+	font-size: 100%
+	line-height: 1.6;
+	margin: 2px;
+}
+#main .inner .listTabF th {
+	border-bottom: 1px solid #FFF;
+	border-right: 1px solid #FFF;
+	background: #4C5F6C;
+	color: #FFF;
+	font-weight: bolder;
+	text-align: center;
+	padding: 5px 5px 3px 5px;
+}
+#main .inner .listTabF td {
+	border-bottom: 1px solid #FFF;
+	border-right: 1px solid #FFF;
+	background: #F3F3F3;
+	color: #333;
+	padding: 5px 5px 3px 5px;
+}
+#main .inner .listTabF td td {
+	border-bottom: none;
+	border-right: none;
+	background: none;
+	padding: 0;
+}
+
+
+div.CheckBoxTab {
+}
+.CheckBoxTab label {
+  vertical-align: middle;
+  margin-left: 5px;
+  margin-right: 5px;
+  border-bottom-width: 1px;
+  border-bottom-style: dashed;
+  border-bottom-color: #066;
+  cursor: pointer;
+}
+
+#footer {
+	background: url(../image/contents_bottom.png) no-repeat center top;
+	color: #666;
+	font-size: 85%;
+	text-align: left;
+	width: 1000px;
+	margin: 0 auto;
+	padding: 45px 0 100px 0;
+}
+
+
+#main .inner .inputTabH {
+	font-size: 100%
+	line-height: 1.6;
+	width: 100%;
+	margin-bottom:5px;
+}
+#main .inner .inputTabB {
+	font-size: 100%
+	line-height: 1.6;
+	width: 100%;
+	margin-top:5px;
+}
+#main .inner .inputTab {
+	border-top: 1px solid #FFF;
+	border-left: 1px solid #FFF;
+	font-size: 100%
+	line-height: 1.6;
+	margin: 2px;
+}
+#main .inner .inputTab th {
+	border-bottom: 1px solid #FFF;
+	border-right: 1px solid #FFF;
+	background: #4C5F6C;
+	color: #FFF;
+	font-weight: bolder;
+	text-align: left;
+	padding: 5px 5px 3px 5px;
+}
+#main .inner .inputTab td {
+	border-bottom: 1px solid #FFF;
+	border-right: 1px solid #FFF;
+	background: #F3F3F3;
+	color: #333;
+	padding: 5px 5px 3px 5px;
+}
+#main .inner .inputTab td td {
+	border-bottom: none;
+	border-right: none;
+	background: none;
+	padding: 0;
+}
+#main .inner .inputTab th td {
+	border-bottom: none;
+	border-right: none;
+	background: none;
+	padding: 0;
+	color: #FFF;
+}
+
+
+.alartMsg {
+  color: #900;
+  font-weight: bold;
+}
+.compMsg {
+  color: #900;
+  text-indent: 15px;
+  font-weight: bold;
+}
+.errMsg {
+  color: #900;
+  text-indent: 15px;
+  font-weight: bold;
+}
+
+.inputComment {
+  font-size: 12px;
+  color: #009;
+  float: right;
+  margin-right: 15px;
+}
+
+.inputCommentImp {
+  font-size: 12px;
+  color: #900;
+  float: right;
+  margin-right: 15px;
+}
+
+.warningComment {
+  font-size: 13px;
+  color: #F00;
+  margin-top:-20px;
+}
+
+
+.floatLeft {
+	float: left;
+}
+
+.inputRule {
+	color: #191970;
+}
+
+span.hissu {
+  color: #F00;
+}
+
+#topBtnArea {
+	float: right;
+}
+
+/*- Menu Tabs 1--------------------------- */
+
+    #tabs1 {
+      float:left;
+      width:90%;
+	  background:change-background;
+      line-height:normal;
+      border-bottom: #CCC solid 1px;
+      padding-top: 0;
+      }
+    #tabs1 ul {
+	  margin:0;
+	  padding:0 10px 0 10px;
+	  list-style:none;
+      }
+    #tabs1 li {
+      display:inline;
+      margin:0;
+      padding:0;
+      }
+    #tabs1 a {
+      float:left;
+      background:url("../image/tableft1.gif") no-repeat left top;
+      margin:0;
+      padding:0 0 0 4px;
+      text-decoration:none;
+      }
+    #tabs1 a span {
+      float:left;
+      display:block;
+      background:url("../image/tabright1.gif") no-repeat right top;
+      padding:5px 28px 4px 24px;
+      color:#627EB7;
+      }
+    /* Commented Backslash Hack hides rule from IE5-Mac \*/
+    #tabs1 a span {float:none;}
+    /* End IE5-Mac hack */
+    #tabs a:hover span {
+      color:#627EB7;
+      }
+    #tabs1 a:hover {
+      background-position:0% -42px;
+      }
+    #tabs1 a:hover span {
+      background-position:100% -42px;
+      }
+    #tabs1 a span.curtab {
+      color:#000;
+      font-weight: bold;
+      }
+
+
+
+#hisTabs {
+	width: 100%;
+}
+
+#hisTabs ul {
+	margin: 0;
+	width: 880px;
+	padding: 0;
+	border-bottom: 2px #ddd solid;
+	margin-right: -2px;
+}
+
+#hisTabs ul li {
+	float: left;
+	margin: 0 0 0 8px;
+	position: relative;
+	bottom: -2px;
+	list-style-type: none;
+	border: 2px #ddd solid;
+	border-top: none;
+}
+#hisTabs ul li.none {
+	border-bottom: 2px #fff solid;
+	font-weight: bold;
+}
+#hisTabs ul li a {
+	color: #000;
+	display: block;
+	padding: 3px 10px 5px;
+	text-decoration: none;
+	background: #fff;
+}
+#hisTabs ul li a.blue {
+	border-top: 5px #2384dc solid;
+}
+#hisTabs ul li a.gray {
+	border-top: 5px #a9a9a9 solid;
+}
+#hisTabs ul li a.red {
+	border-top: 5px #dd1d25 solid;
+}
+#hisTabs ul li a.yellow {
+	border-top: 5px #ffd242 solid;
+}
+#hisTabs ul li a:hover {
+	position: relative;
+	bottom: 6px;
+}
+
+#hisBox {
+	margin-top: -2px;
+	width: 868px;
+	border: 2px #ddd solid;
+	border-top: none;
+	display: block;
+	padding-left: 10px;
+	padding-top: 8px;
+}
+
+/* clerfix */
+.hisclear:after {
+    content:"";
+    display:block;
+    overflow:hidden;
+}
+.hisclear:after {
+    clear:both;
+}
+.hisclear {
+    zoom:1;
+}
+
+
+/* ドラッグ中の行項目の背景色 */
+.nowDragColor td {
+	background-color: #FFA07A;
+}
+
+/* 表示順セルの背景画像を設定 */
+#main .inner .listTab td.SortTypeCell {
+	padding: 2px;
+	background:#F3F3F3 url("../image/sort_handle.gif") no-repeat center;
+	width: 44px;
+	line-height: 180%;
+}
+/* テーブル項目を可視化する */
+.AjaxTableEnable {
+	display: inline;
+}
+
+/* テーブル項目を不可視化する */
+.AjaxTableDisable {
+	display: none;
+}

@@ -1,0 +1,164 @@
+.main{
+}
+.function_menu{
+	float: left;
+}
+.input_field{
+}
+.error_message{
+	width: auto;
+	padding: 10px;
+	border: 2px solid red;
+	background-color: #FFE1FF;
+}
+.success_message{
+	width: auto;
+	padding: 10px;
+	border: 2px solid #1FDF7F;
+	background-color: #DDFFEE;
+}
+#form{
+	visibility: hidden;
+}
+#server_info{
+	font-size: 80%;
+	visibility: hidden;
+}
+#create_option{
+	font-size: 80%;
+	visibility: hidden;
+}
+
+
+/* 履歴 */
+#history_wrap{
+	width: 450px;
+	font-size: 80%;
+	float: left;
+}
+#history_wrap > span{
+	font-weight: bold;
+}
+
+#history_body{
+	overflow: auto;
+	border: 1px solid #ccc;
+}
+#history_body_ie{
+	max-height: 210px;
+}
+
+#history_list{
+	list-style: none;
+	padding-left: 5px;
+}
+#history_list > li{
+	padding: 5px;
+}
+.history_title{
+	font-weight: bold;
+}
+.history_title span{
+	padding-left: 23px;
+}
+
+
+/* 登録状況チェック */
+#check_table{
+	width:90%;
+	font-size: 80%;
+	border-collapse: separate;
+	border-spacing: 0px;
+	border-top: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+}
+caption{
+	padding-bottom: 5px;
+	font-weight: bold;
+}
+#check_table th{
+	width: 15%;
+	padding: 4px;
+	text-align: left;
+	vertical-align: top;
+	color: #444;
+	background-color: #ccc;
+	border-top: 1px solid #fff;
+	border-left: 1px solid #fff;
+	border-right: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+}
+#check_table td{
+	padding: 4px;
+	background-color: #fafafa;
+	border-right: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+}
+
+
+
+
+
+.ml_registration{
+}
+.ml_registration ul{
+	background-color: white;
+	border: 1px solid black;
+	position: absolute;
+	display: none;
+	list-style: none;
+}
+
+div [id^="ml_list"] {
+	font-size: 90%;
+	position: absolute;
+	display: none;
+	width: 300px;
+	margin-top: -330px;
+	margin-left: 10px;
+	border-collapse: separate;
+	border-spacing: 0px;
+	border-top: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+}
+div [id^="ml_list"] th{
+	padding: 4px;
+	text-align: left;
+	vertical-align: top;
+	color: #444;
+	background-color: #ccc;
+	border-top: 1px solid #fff;
+	border-left: 1px solid #fff;
+	border-right: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+}
+div [id^="ml_list"] td{
+	padding: 4px;
+	background-color: #fafafa;
+	border-right: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+}
+
+.theader_name{
+	width: 30%;
+}
+.theader_am{
+	width: 30%;
+}
+.theader_reg{
+	width: 40%;
+}
+
+#past_time{
+	font-size: 80%;
+}
+
+
+.clear{
+	clear: both;
+}
+
+/*処理中メッセージを非表示にするため*/
+#loading_message{
+	display: none;
+}

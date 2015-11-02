@@ -1,0 +1,145 @@
+<?php
+/**********************************************************
+* File         : sql.inc.php
+* Authors      : mie tsutsui
+* Date         : 2013.01.10
+* Last Update  : 2013.01.10
+* Copyright    :
+***********************************************************/
+require_once("sql/common_sql.inc.php");
+
+$cmnSql['EXISTS_STAFF_ID'] = "SELECT user_id FROM user_mst WHERE staff_id = '{0}' AND start_date <= now()::date AND end_date >= now()::date AND retire_flg = '0' {COND}";
+
+$cmnSql['EXISTS_LOGIN_ID'] = "SELECT user_id FROM user_mst WHERE login_id = '{0}' AND start_date <= now()::date AND end_date >= now()::date AND retire_flg = '0' {COND}";
+
+$cmnSql['EXISTS_STAFFCODE'] = "SELECT user_id FROM user_his_tbl WHERE staffcode = '{0}' AND validstartdate <= now()::date AND validenddate >= now()::date {COND}";
+
+
+$cmnSql['INSERT_SUB_BELONG_CHG'] = "
+INSERT INTO user_sub_chg_tbl (
+user_id,
+list_no,
+belong_chg_id,
+make_id,
+update_id
+)
+VALUES
+(
+{USER_ID},
+{LIST_NO},
+{BELONG_CHG_ID},
+{MAKE_ID},
+{UPDATE_ID}
+)
+";
+
+$cmnSql['INSERT_SUB_JOB'] = "
+INSERT INTO user_sub_job_tbl (
+user_id,
+list_no,
+job_id,
+make_id,
+update_id
+)
+VALUES
+(
+{USER_ID},
+{LIST_NO},
+{JOB_ID},
+{MAKE_ID},
+{UPDATE_ID}
+)
+";
+
+$cmnSql['INSERT_SUB_POST'] = "
+INSERT INTO user_sub_post_tbl (
+user_id,
+list_no,
+post_id,
+make_id,
+update_id
+)
+VALUES
+(
+{USER_ID},
+{LIST_NO},
+{POST_ID},
+{MAKE_ID},
+{UPDATE_ID}
+)
+";
+
+$cmnSql['INSERT_USER_ENTRY'] = "
+INSERT INTO user_entry_tbl (
+user_id,
+make_id,
+update_id
+)
+VALUES
+(
+{USER_ID},
+{MAKE_ID},
+{UPDATE_ID}
+)
+";
+
+$cmnSql['INSERT_USER_ROLE'] = "
+INSERT INTO user_role_tbl (
+user_id,
+role_id,
+make_id,
+update_id
+)
+VALUES
+(
+{USER_ID},
+{ROLE_ID},
+{MAKE_ID},
+{UPDATE_ID}
+)
+";
+
+$cmnSql['INSERT_USER_HIS'] = "
+INSERT INTO user_his_tbl (
+user_id,
+list_no,
+staffcode,
+wardcode,
+professioncode,
+gradecode,
+kananame,
+kanjiname,
+password,
+validstartdate,
+validenddate,
+deptcode,
+appcode,
+deptgroupcode,
+send_date,
+make_id,
+update_id
+)
+VALUES
+(
+{USER_ID},
+{LIST_NO},
+{STAFFCODE},
+{WARDCODE},
+{PROFESSIONCODE},
+{GRADECODE},
+{KANANAME},
+{KANJINAME},
+{PASSWORD},
+{VALIDSTARTDATE},
+{VALIDENDDATE},
+{DEPTCODE},
+{APPCODE},
+{DEPTGROUPCODE},
+{SEND_DATE},
+{MAKE_ID},
+{UPDATE_ID}
+)
+";
+
+
+?>

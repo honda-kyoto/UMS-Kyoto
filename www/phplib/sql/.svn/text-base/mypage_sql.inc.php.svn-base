@@ -1,0 +1,88 @@
+<?php
+/**********************************************************
+* File         : sql.inc.php
+* Authors      : mie tsutsui
+* Date         : 2013.01.10
+* Last Update  : 2013.01.10
+* Copyright    :
+***********************************************************/
+require_once("sql/common_sql.inc.php");
+
+$cmnSql['GET_USER_MAIL_ACC'] = "
+SELECT
+    mail_acc
+FROM
+    user_mst
+WHERE
+    user_id = {0}
+";
+
+$cmnSql['GET_USER_SENON_HEAD'] = "
+SELECT
+    sendon_type
+FROM
+    sendon_head_tbl
+WHERE
+    del_flg = '0' AND
+	user_id = {0}
+";
+
+$cmnSql['GET_USER_SENON_LIST'] = "
+SELECT
+    list_no,
+    sendon_addr
+FROM
+    sendon_list_tbl
+WHERE
+    del_flg = '0' AND
+    user_id = {0}
+ORDER BY
+    list_no
+";
+
+$cmnSql['CHECK_CURRENT_PASSWD'] = "SELECT user_id FROM user_mst WHERE user_id = '{0}' AND login_passwd = '{1}'";
+
+
+$cmnSql['EXISTS_USER_SENON_HEAD'] = "
+SELECT
+    sendon_type
+FROM
+    sendon_head_tbl
+WHERE
+	user_id = {0}
+";
+
+$cmnSql['INSERT_SENDON_TYPE'] = "INSERT INTO sendon_head_tbl (user_id, sendon_type, make_id, update_id) VALUES ({0}, {SENDON_TYPE}, {MAKE_ID}, {UPDATE_ID});";
+
+$cmnSql['UPDATE_SENDON_TYPE'] = "UPDATE sendon_head_tbl SET sendon_type = {SENDON_TYPE}, del_flg = '0', update_time = now(), update_id = {UPDATE_ID} WHERE user_id = {0}";
+
+$cmnSql['INSERT_SENDON_ADDR'] = "
+INSERT INTO sendon_list_tbl (
+user_id,
+list_no,
+sendon_addr,
+make_id,
+update_id
+) VALUES (
+{0},
+(SELECT COALESCE(MAX(list_no), 0) + 1 FROM sendon_list_tbl WHERE user_id = {0}),
+{SENDON_ADDR},
+{MAKE_ID},
+{UPDATE_ID}
+)
+";
+
+$cmnSql['DELETE_SENDON_ADDR'] = "UPDATE sendon_list_tbl SET del_flg = '1', update_time = now(), update_id = {UPDATE_ID} WHERE user_id = {0} AND list_no = {1}";
+
+$cmnSql['UPDATE_PASSWD'] = "
+UPDATE
+    user_mst
+SET
+    login_passwd = {LOGIN_PASSWD},
+    update_time = now(),
+    update_id = {UPDATE_ID}
+WHERE
+    user_id = {0}
+";
+
+?>

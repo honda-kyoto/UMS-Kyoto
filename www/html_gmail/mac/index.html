@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>IPアドレス／MACアドレスの調べ方</title>
+</head>
+
+<body>
+<h1>IPアドレス／MACアドレスの調べ方</h1>
+<blockquote> 
+  <p>｜<a href="#Win9x">Windows9x</a>｜<a href="#Win9x">WindowsMe</a>｜<a href="#WinNT">WindowsNT</a>｜<a href="#WinNT">Windows2000</a>｜<a href="#WinNT">WindowsXP</a>｜<a href="#Mac">Macintosh</a>｜<a href="#MacX">MacOS 
+    X</a>｜<a href="#MacX106">MacOS X (10.6, Snow Leopard)</a>｜ </p>
+</blockquote>
+<p>MAC（イーサネット）アドレスは、ネットワークアダプタ（LANカード）に設定されている固有の番号で、OSによって Ethernet Address、アダプタアドレス、Physical 
+  Address と言われています </p>
+<hr>
+<p>[ WindowsNT/2000/XP ]<a name="WinNT"></a></p>
+<ol>
+  <li>［スタート］－［プログラム］－［アクセサリ］－［コマンド プロンプト］を選択<br>
+    <font color="#FF0000">※［コマンドプロンプト］が見つからないときは</font>、 ［スタート］－［ファイル名を指定して実行］で、"<font color="#0000FF">cmd</font>"と入力し実行</li>
+  <li>［コマンドプロンプト］画面が表示されるので<br>
+    "<font color="#0000FF">ipconfig /all</font>"と入力し、［ENTER］キーを押す<br>
+    <img src="index_files/ipconfig.gif" height="488" width="669"></li>
+  <li>ここに表示された「Ethernet adapter ローカル エリア接続」の「<font color="#FF0000">Physical Address</font>」がMACアドレスです<br>
+    ここに表示された「Ethernet adapter ローカル エリア接続」の「<font color="#0000FF">IP Address</font>」がIPアドレスです 
+  </li>
+</ol>
+<hr>
+<p>[ Windows9x/Me ]<a name="Win9x"></a></p>
+<ol>
+  <li>［スタート］－［ファイル名を指定して実行］</li>
+  <li>［ファイル名を指定して実行］画面が表示されるので<br>
+    "<font color="#0000FF">winipcfg</font>"と入力し、［OK］ボタンをクリックする </li>
+  <li>［IP設定］画面が表示されるので、使用しているEthernetカードを選択する<br>
+    <font color="#FF0000">※[PPP Adapter] ではありません<br>
+    </font> <img src="index_files/winipcfg.gif" height="235" width="362"></li>
+  <li>ここに表示された「<font color="#0000FF"><font color="#FF0000">アダプタ アドレス</font></font>」がMACアドレスです<br>
+    ここに表示された「<font color="#0000FF">IP アドレス</font>」がIPアドレスです </li>
+</ol>
+<hr>
+<p>[ Macintosh ]<a name="Mac"></a></p>
+<h3><font color="#FF00FF" face="ＭＳ Ｐゴシック, Osaka">MacTCPがコントロールパネルにある場合</font></h3>
+<ol>
+  <li>［アップルメニュー］－［コントロールパネル］－［MacTCP］を選択</li>
+  <li>Ethernetアイコンを［Option］キーを押しながらクリック</li>
+  <li><font color="#0000FF">Ethernetアイコンの下</font>にMACアドレスが表示される</li>
+</ol>
+<h3><font color="#FF00FF" face="ＭＳ Ｐゴシック, Osaka">TCP/IPがコントロールパネルにある場合</font></h3>
+<ol>
+  <li>［アップルメニュー］－［コントロールパネル］－［TCP/IP］を選択</li>
+  <li>経由先として［Ethernet］を選択</li>
+  <li>［ファイル］メニューから［情報を見る］を選択<br>
+    <img src="index_files/mac_tcpip.gif" height="252" width="292"></li>
+  <li>ここに表示された「<font color="#FF0000">ハードウェアアドレス</font>」がMACアドレスです<br>
+    ここに表示された「<font color="#0000FF">このコンピュータ</font>」がIPアドレスです </li>
+</ol>
+<hr>
+<p>[ MacOS X ]<a name="MacX" id="MacX"></a></p>
+<ol>
+  <li>［アップルメニュー］－［システム環境設定］を選択</li>
+  <li>［システム環境設定］の中から［ネットワーク］をクリック</li>
+  <li>［設定：］で使用しているネットワークインターフェイスを指定<br>
+    <img src="index_files/macosx.gif" height="543" width="595"> </li>
+  <li>ここに表示された［TCP/IP］タブにある「<font color="#FF0000">Ethernetアドレス</font>」がMACアドレスです<br>
+    ここに表示された「<font color="#0000FF">IPアドレス</font>」がIPアドレスです </li>
+</ol>
+<hr>
+<p>[ MacOS X (10.6, Snow Leopard)]<a name="MacX106" id="MacX106"></a></p>
+<ol>
+  <li>［アップルメニュー］－［システム環境設定］を選択<br>
+        <img src="index_files/macosx106-01-menu.png" height="271" width="316"></li>
+  <li>［システム環境設定］の中から［ネットワーク］をクリック<br>
+        <img src="index_files/macosx106-02-system.png" height="358" width="402"></li>
+  <li> 画面左のメニューで使用しているネットワークインターフェイスを
+      指定（例ではEthernetを選択）<br>
+      右側に表示されたIPアドレスの箇所に表示される数字が
+     「<font color="#FF0000">IPアドレス</font>」です<br>
+      <img src="index_files/macosx106-03-ipaddress.png" height="576" width="665"></li>
+  <li> 上記画面右下の「詳細」ボタンを押し、Ethernetタブを選びます。<br>
+「<font color="#FF0000">Ethernet ID</font>」に表示されるコロン（:）で
+区切られた数字がMACアドレスです<br>
+        <img src="index_files/macosx106-04-macaddress.png" height="570" width="665"></li>
+</ol>
+<hr>
+
+
+</body></html>
